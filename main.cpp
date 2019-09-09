@@ -8,8 +8,11 @@
 #include <exception>
 #include <type_traits>
 #include <chrono>
+#include <ctime>
+#include <stack>
 
 #include "otchi_ebml/ebml_value.h"
+#include <otchi_ebml/ebml_clock.h>
 
 
 struct EbmlTag {
@@ -25,7 +28,7 @@ public:
     std::ifstream fs_;
     std::streampos size_;
     std::map<int, std::tuple<std::string, otchi_ebml::EbmlType>> tags{
-            {0x18538067, {"", otchi_ebml::EbmlType::kMaster}}
+            {0x1A45DFA3, {"EBML", otchi_ebml::EbmlType::kMaster}}
     };
     //std::vector<EbmlTag> tags{{0x18538067, "Segment", otchi_ebml::EbmlType::kMaster }};
 
@@ -168,75 +171,102 @@ public:
         return vector;
     }
 
-    std::chrono::time_point readDate(long long size) {
-        auto clock = adaptec
+    std::chrono::high_resolution_clock::time_point readDate(long long size) {
+        using namespace std::chrono;
+
+        int nano = readInteger(size, false);
+        auto n = duration_cast<high_resolution_clock::duration>(nanoseconds(nano));
+        auto epoch = duration_cast<high_resolution_clock::duration>(nanoseconds(978303600000000000));
+
+        auto t = duration_cast<seconds>(n + epoch);
+        auto g = std::chrono::high_resolution_clock::from_time_t(t.count());
+        return g;
     }
 
 
 
-    otchi_ebml::EbmlMaster parse(std::streamoff from = 0, std::streamoff to = -1) {
+    std::vector<otchi_ebml::EbmlMaster*> parse(std::streamoff from = 0, std::streamoff to = -1) {
         if (to < 0) {
             to = size();
         }
 
         // Set cursor to start
         fs_.seekg(from, std::ios_base::beg);
-        otchi_ebml::EbmlMaster masterNode{};
+        std::vector<otchi_ebml::EbmlMaster*> masterNodes;
+        std::stack<otchi_ebml::EbmlMaster*> roots{};
 
         while (fs_.tellg() < to) {
-            int id = -1;
+            std::cout << "Current pos " << fs_.tellg() << std::endl;
+            int id;
             try {
                 id = readId();
             } catch (std::runtime_error &error) {
                 std::cerr << error.what() << std::endl;
-                return masterNode;
+                return masterNodes;
             }
             long long size = readSize();
             if (size == 0b01111111) {
                 std::cerr << "Don't know how to handle element with unknown size: " << size << std::endl;
                 size = to - fs_.tellg();
             }
+
+            if (!roots.empty() && roots.top()->getSize() < size)
+                roots.pop();
+
             std::tuple<std::string, otchi_ebml::EbmlType> tag;
+            std::cout << id << std::endl;
             if (tags.count(id)) {
                 tag = tags[id];
             } else {
                 fs_.seekg(size);
             }
+            std::cout << "Found " << std::get<0>(tag) << " Tag" << std::endl;
+            std::cout << "Current pos " << fs_.tellg() << std::endl;
 
             otchi_ebml::EbmlValue *node;
 
             switch (std::get<1>(tag)) {
                 case otchi_ebml::EbmlType::kSInt:
-                    node = new otchi_ebml::EbmlInt{readInteger(size, true)};
+                    node = new otchi_ebml::EbmlInt{size, readInteger(size, true)};
                 case otchi_ebml::EbmlType::kUInt:
-                    node = new otchi_ebml::EbmlUnsignedInt{static_cast<unsigned int>(readInteger(size, false))};
+                    node = new otchi_ebml::EbmlUnsignedInt{size, static_cast<unsigned int>(readInteger(size, false))};
                 case otchi_ebml::EbmlType::kDouble:
-                    node = new otchi_ebml::EbmlDouble{readDouble(size)};
+                    node = new otchi_ebml::EbmlDouble{size, readDouble(size)};
                 case otchi_ebml::EbmlType::kString:
-                    node = new otchi_ebml::EbmlString{readString(size)};
+                    node = new otchi_ebml::EbmlString{size, readString(size)};
                 case otchi_ebml::EbmlType::kUTF8:
-                    node = new otchi_ebml::EbmlUtf8{readUnicode(size)};
+                    node = new otchi_ebml::EbmlUtf8{size, readUnicode(size)};
                 case otchi_ebml::EbmlType::kBinary:
-                    node = new otchi_ebml::EbmlBinary{readBinary(size)};
-                case otchi_ebml::EbmlType::kMaster:
-                    node = nullptr;
+                    node = new otchi_ebml::EbmlBinary{size, readBinary(size)};
                 case otchi_ebml::EbmlType::kDate:
-                    node =
+                    node = new otchi_ebml::EbmlDate{size, readDate(size)};
+                case otchi_ebml::EbmlType::kMaster:
+                    //size = readSize();
+                    node = new otchi_ebml::EbmlMaster{size, {}};
+                    roots.push(dynamic_cast<otchi_ebml::EbmlMaster*>(node));
+                    if (roots.empty())
+                        masterNodes.push_back(dynamic_cast<otchi_ebml::EbmlMaster*>(node));
             }
 
+            if (node->getType() != otchi_ebml::EbmlType::kMaster) {
+                roots.top()->append(node);
+            }
 
         }
-
+        return masterNodes;
     }
 
 };
 
 int main() {
-    std::cout << u8"ä" << std::endl;
-    std::filesystem::path path = "test1.mkv";
+
+    //std::time_t t = system_clock::to_time_t(p);
+    //std::cout << std::ctime(&t) << std::endl;
+
+/*    std::filesystem::path path = "test1.mkv";
     auto ebml = Ebml(path);
     ebml.fs_.seekg(8);
-    std::cout << ebml.readUnicode(8) << std::endl;
+    std::cout << ebml.readUnicode(8) << std::endl;*/
 
 
     /*std::filesystem::path path = "test1.mkv";
@@ -244,5 +274,9 @@ int main() {
     while (ebml.fs_.tellg() < ebml.size()) {
         std::cout << ebml.readSize() << std::endl;
     }*/
+
+    std::filesystem::path path = "test1.mkv";
+    auto ebml = Ebml(path);
+    ebml.parse();
     return 0;
 }

@@ -3,7 +3,7 @@ project(include/otchi_ebml)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(headers include/otchi_ebml/ebml_value.h)
+set(headers include/otchi_ebml/ebml_value.h include/otchi_ebml/ebml_clock.h)
 set(src main.cpp)
 
 
