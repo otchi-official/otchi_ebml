@@ -28,7 +28,12 @@ public:
     std::ifstream fs_;
     std::streampos size_;
     std::map<int, std::tuple<std::string, otchi_ebml::EbmlType>> tags{
-            {0x1A45DFA3, {"EBML", otchi_ebml::EbmlType::kMaster}}
+            {0x1A45DFA3, {"EBML",              otchi_ebml::EbmlType::kMaster}},
+            {0x4286,     {"EBMLVersion",       otchi_ebml::EbmlType::kUInt}},
+            {0x42F7,     {"EBMLReadVersion",   otchi_ebml::EbmlType::kUInt}},
+            {0x42F2,     {"EBMLMaxIDLength",   otchi_ebml::EbmlType::kUInt}},
+            {0x42F3,     {"EBMLMaxSizeLength", otchi_ebml::EbmlType::kUInt}},
+            {0x4282,     {"DocType",           otchi_ebml::EbmlType::kString}}
     };
     //std::vector<EbmlTag> tags{{0x18538067, "Segment", otchi_ebml::EbmlType::kMaster }};
 
@@ -61,7 +66,7 @@ public:
         return fs_.tellg();
     }
 
-    int readId() {
+    int readId(int *s = nullptr) {
         unsigned char initialBit;
         fs_.read(reinterpret_cast<char *>(&initialBit), 1);
 
@@ -78,8 +83,11 @@ public:
             throw std::runtime_error("Invalid element ID");
         }
 
+        if (s)
+            *s = static_cast<int>(size + 1);
+
         int value{initialBit << 8u * size};
-        auto* buffer = new unsigned char[size];
+        auto *buffer = new unsigned char[size];
         fs_.read(reinterpret_cast<char *>(buffer), size);
         for (unsigned int i = 0; i < size; i++) {
             value += buffer[i] << 8u * (size - i - 1);
@@ -87,7 +95,7 @@ public:
         return value;
     }
 
-    long long readSize() {
+    long long readSize(int *s = nullptr) {
         unsigned char initialBit;
         fs_.read(reinterpret_cast<char *>(&initialBit), 1);
 
@@ -120,8 +128,11 @@ public:
             throw std::length_error("Undefined element size");
         }
 
+        if (s)
+            *s = static_cast<int>(size + 1);
+
         auto buffer = new unsigned char[size];
-        fs_.read(reinterpret_cast<char*>(buffer), size);
+        fs_.read(reinterpret_cast<char *>(buffer), size);
         for (unsigned int i = 0; i < size; i++) {
             value += buffer[i] << 8u * (size - i - 1);
         }
@@ -133,9 +144,9 @@ public:
             throw std::range_error("Length is out of range");
 
         auto buffer = new unsigned char[length];
-        fs_.read(reinterpret_cast<char*>(buffer), length);
+        fs_.read(reinterpret_cast<char *>(buffer), length);
         int value{0};
-        for (unsigned int i = 0; i < length; i ++) {
+        for (unsigned int i = 0; i < length; i++) {
             value += buffer[i] << 8u * (length - i - 1);
         }
         if (isSigned) {
@@ -149,7 +160,7 @@ public:
 
     double readDouble(long long size) {
         double d;
-        fs_.read(reinterpret_cast<char*>(&d), size);
+        fs_.read(reinterpret_cast<char *>(&d), size);
         return d;
     }
 
@@ -171,89 +182,113 @@ public:
         return vector;
     }
 
-    std::chrono::high_resolution_clock::time_point readDate(long long size) {
+    std::chrono::system_clock::time_point readDate(long long size) {
         using namespace std::chrono;
 
-        int nano = readInteger(size, false);
-        auto n = duration_cast<high_resolution_clock::duration>(nanoseconds(nano));
-        auto epoch = duration_cast<high_resolution_clock::duration>(nanoseconds(978303600000000000));
+        auto nano = readInteger(size, false);
+        auto n = duration_cast<system_clock::duration>(nanoseconds(nano));
+        auto epoch = duration_cast<system_clock::duration>(nanoseconds(978303600000000000));
 
         auto t = duration_cast<seconds>(n + epoch);
-        auto g = std::chrono::high_resolution_clock::from_time_t(t.count());
+        auto g = system_clock::from_time_t(t.count());
         return g;
     }
 
 
-
-    std::vector<otchi_ebml::EbmlMaster*> parse(std::streamoff from = 0, std::streamoff to = -1) {
+    std::vector<otchi_ebml::EbmlMaster *> parse(std::streamoff from = 0, std::streamoff to = -1) {
         if (to < 0) {
             to = size();
         }
 
         // Set cursor to start
         fs_.seekg(from, std::ios_base::beg);
-        std::vector<otchi_ebml::EbmlMaster*> masterNodes;
-        std::stack<otchi_ebml::EbmlMaster*> roots{};
+
+        std::vector<otchi_ebml::EbmlMaster *> masterNodes;
+        std::stack<otchi_ebml::EbmlMaster *> roots{};
 
         while (fs_.tellg() < to) {
             std::cout << "Current pos " << fs_.tellg() << std::endl;
-            int id;
-            try {
-                id = readId();
-            } catch (std::runtime_error &error) {
-                std::cerr << error.what() << std::endl;
-                return masterNodes;
-            }
-            long long size = readSize();
-            if (size == 0b01111111) {
-                std::cerr << "Don't know how to handle element with unknown size: " << size << std::endl;
-                size = to - fs_.tellg();
-            }
+            auto node = parseNode(to);
 
-            if (!roots.empty() && roots.top()->getSize() < size)
-                roots.pop();
+            // Ignore nodes we don't want to capture.
+            if (!node)
+                continue;
 
-            std::tuple<std::string, otchi_ebml::EbmlType> tag;
-            std::cout << id << std::endl;
-            if (tags.count(id)) {
-                tag = tags[id];
-            } else {
-                fs_.seekg(size);
-            }
-            std::cout << "Found " << std::get<0>(tag) << " Tag" << std::endl;
-            std::cout << "Current pos " << fs_.tellg() << std::endl;
-
-            otchi_ebml::EbmlValue *node;
-
-            switch (std::get<1>(tag)) {
-                case otchi_ebml::EbmlType::kSInt:
-                    node = new otchi_ebml::EbmlInt{size, readInteger(size, true)};
-                case otchi_ebml::EbmlType::kUInt:
-                    node = new otchi_ebml::EbmlUnsignedInt{size, static_cast<unsigned int>(readInteger(size, false))};
-                case otchi_ebml::EbmlType::kDouble:
-                    node = new otchi_ebml::EbmlDouble{size, readDouble(size)};
-                case otchi_ebml::EbmlType::kString:
-                    node = new otchi_ebml::EbmlString{size, readString(size)};
-                case otchi_ebml::EbmlType::kUTF8:
-                    node = new otchi_ebml::EbmlUtf8{size, readUnicode(size)};
-                case otchi_ebml::EbmlType::kBinary:
-                    node = new otchi_ebml::EbmlBinary{size, readBinary(size)};
-                case otchi_ebml::EbmlType::kDate:
-                    node = new otchi_ebml::EbmlDate{size, readDate(size)};
-                case otchi_ebml::EbmlType::kMaster:
-                    //size = readSize();
-                    node = new otchi_ebml::EbmlMaster{size, {}};
-                    roots.push(dynamic_cast<otchi_ebml::EbmlMaster*>(node));
-                    if (roots.empty())
-                        masterNodes.push_back(dynamic_cast<otchi_ebml::EbmlMaster*>(node));
+            while (!roots.empty()) {
+                auto top = roots.top();
+                // Append the node to the current root if it didnt surpass the limit of the root node yet.
+                if (node->getStart() < (top->getStart() + top->getSize())) {
+                    top->append(node);
+                    break;
+                } else {
+                    roots.pop();
+                }
             }
 
-            if (node->getType() != otchi_ebml::EbmlType::kMaster) {
-                roots.top()->append(node);
+            if (roots.empty()) {
+                if (node->getType() != otchi_ebml::EbmlType::kMaster)
+                    throw std::runtime_error("Invalid node. Can't get a non master node as a root node");
+                masterNodes.push_back(dynamic_cast<otchi_ebml::EbmlMaster *>(node));
+                roots.push(dynamic_cast<otchi_ebml::EbmlMaster *>(node));
+                continue;
             }
 
         }
         return masterNodes;
+    }
+
+    otchi_ebml::EbmlValue *parseNode(std::streamoff to) {
+        long long start = fs_.tellg();
+        int id;
+        long long totalSize{};
+        try {
+            int s;
+            id = readId(&s);
+            totalSize += s;
+        } catch (std::runtime_error &error) {
+            std::cerr << error.what() << std::endl;
+            return nullptr;
+        }
+        int s;
+        long long contentSize = readSize(&s);
+        totalSize += s + contentSize;
+        if (contentSize == 0b01111111) {
+            std::cerr << "Don't know how to handle element with unknown contentSize: " << contentSize << std::endl;
+            contentSize = to - fs_.tellg();
+        }
+
+        std::tuple<std::string, otchi_ebml::EbmlType> tag;
+        if (tags.count(id)) {
+            tag = tags[id];
+        } else {
+            fs_.seekg(contentSize + fs_.tellg());
+            std::cout << "Skipping tag with id: " << std::hex << id << std::endl;
+            return nullptr;
+        }
+        std::cout << "Found " << std::get<0>(tag) << " Tag" << std::endl;
+
+        otchi_ebml::EbmlValue *node = nullptr;
+
+        switch (std::get<1>(tag)) {
+            case otchi_ebml::EbmlType::kSInt:
+                return new otchi_ebml::EbmlInt{start, contentSize, totalSize, readInteger(contentSize, true)};
+            case otchi_ebml::EbmlType::kUInt:
+                return new otchi_ebml::EbmlUnsignedInt{start, contentSize, totalSize,
+                                                       static_cast<unsigned int>(readInteger(contentSize,
+                                                                                             false))};
+            case otchi_ebml::EbmlType::kDouble:
+                return new otchi_ebml::EbmlDouble{start, contentSize, totalSize, readDouble(contentSize)};
+            case otchi_ebml::EbmlType::kString:
+                return new otchi_ebml::EbmlString{start, contentSize, totalSize, readString(contentSize)};
+            case otchi_ebml::EbmlType::kUTF8:
+                return new otchi_ebml::EbmlUtf8{start, contentSize, totalSize, readUnicode(contentSize)};
+            case otchi_ebml::EbmlType::kBinary:
+                return new otchi_ebml::EbmlBinary{start, contentSize, totalSize, readBinary(contentSize)};
+            case otchi_ebml::EbmlType::kDate:
+                return new otchi_ebml::EbmlDate{start, contentSize, totalSize, readDate(contentSize)};
+            case otchi_ebml::EbmlType::kMaster:
+                return new otchi_ebml::EbmlMaster{start, contentSize, totalSize, {}};
+        }
     }
 
 };
@@ -277,6 +312,7 @@ int main() {
 
     std::filesystem::path path = "test1.mkv";
     auto ebml = Ebml(path);
-    ebml.parse();
+    auto elements = ebml.parse();
+    std::cout << *elements.front();
     return 0;
 }
