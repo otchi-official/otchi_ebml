@@ -28,12 +28,18 @@ public:
     std::ifstream fs_;
     std::streampos size_;
     std::map<int, std::tuple<std::string, otchi_ebml::EbmlType>> tags{
-            {0x1A45DFA3, {"EBML",              otchi_ebml::EbmlType::kMaster}},
-            {0x4286,     {"EBMLVersion",       otchi_ebml::EbmlType::kUInt}},
-            {0x42F7,     {"EBMLReadVersion",   otchi_ebml::EbmlType::kUInt}},
-            {0x42F2,     {"EBMLMaxIDLength",   otchi_ebml::EbmlType::kUInt}},
-            {0x42F3,     {"EBMLMaxSizeLength", otchi_ebml::EbmlType::kUInt}},
-            {0x4282,     {"DocType",           otchi_ebml::EbmlType::kString}}
+            {0x1A45DFA3, {"EBML",                    otchi_ebml::EbmlType::kMaster}},
+            {0x4286,     {"EBMLVersion",             otchi_ebml::EbmlType::kUInt}},
+            {0x42F7,     {"EBMLReadVersion",         otchi_ebml::EbmlType::kUInt}},
+            {0x42F2,     {"EBMLMaxIDLength",         otchi_ebml::EbmlType::kUInt}},
+            {0x42F3,     {"EBMLMaxSizeLength",       otchi_ebml::EbmlType::kUInt}},
+            {0x4282,     {"DocType",                 otchi_ebml::EbmlType::kString}},
+            {0x4287,     {"DocTypeVersion",          otchi_ebml::EbmlType::kUInt}},
+            {0x4285,     {"DocTypeReadVersion",      otchi_ebml::EbmlType::kUInt}},
+            {0x4281,     {"DocTypeExtension",        otchi_ebml::EbmlType::kMaster}},
+            {0x4283,     {"DocTypeExtensionName",    otchi_ebml::EbmlType::kString}},
+            {0x4284,     {"DocTypeExtensionVersion", otchi_ebml::EbmlType::kUInt}},
+            {}
     };
     //std::vector<EbmlTag> tags{{0x18538067, "Segment", otchi_ebml::EbmlType::kMaster }};
 
@@ -237,7 +243,7 @@ public:
         return masterNodes;
     }
 
-    otchi_ebml::EbmlValue *parseNode(std::streamoff to) {
+    otchi_ebml::EBMLElement *parseNode(std::streamoff to) {
         long long start = fs_.tellg();
         int id;
         long long totalSize{};
@@ -267,7 +273,7 @@ public:
         }
         std::cout << "Found " << std::get<0>(tag) << " Tag" << std::endl;
 
-        otchi_ebml::EbmlValue *node = nullptr;
+        otchi_ebml::EBMLElement *node = nullptr;
 
         switch (std::get<1>(tag)) {
             case otchi_ebml::EbmlType::kSInt:

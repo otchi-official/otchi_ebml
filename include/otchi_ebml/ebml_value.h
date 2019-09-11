@@ -24,13 +24,13 @@ namespace otchi_ebml {
         kBinary
     };
 
-    class EbmlValue {
+    class EBMLElement {
         long long contentSize_;
         long long size_;
         long long start_;
     public:
 
-        explicit EbmlValue(long long start, long long contentSize, long long size) :
+        explicit EBMLElement(long long start, long long contentSize, long long size) :
                 start_{start},
                 contentSize_{contentSize},
                 size_{size} {}
@@ -50,11 +50,11 @@ namespace otchi_ebml {
         }
     };
 
-    class EbmlInt : public EbmlValue {
+    class EbmlInt : public EBMLElement {
         int n_;
     public:
         explicit EbmlInt(long long start, long long contentSize, long long size, int n) :
-                EbmlValue{start, contentSize, size}, n_{n} {}
+                EBMLElement{start, contentSize, size}, n_{n} {}
 
         EbmlType getType() override {
             return EbmlType::kSInt;
@@ -69,11 +69,11 @@ namespace otchi_ebml {
         return os << "EBML Int: " << i.getValue() << "\n";
     }
 
-    class EbmlUnsignedInt : public EbmlValue {
+    class EbmlUnsignedInt : public EBMLElement {
         unsigned int n_;
     public:
         explicit EbmlUnsignedInt(long long start, long long contentSize, long long size, unsigned int n) :
-                EbmlValue{start, contentSize, size}, n_{n} {}
+                EBMLElement{start, contentSize, size}, n_{n} {}
 
         EbmlType getType() override {
             return EbmlType::kUInt;
@@ -85,14 +85,14 @@ namespace otchi_ebml {
     };
 
     std::ostream &operator<<(std::ostream &os, const EbmlUnsignedInt &uint) {
-        return os << "EBML Unsigned Int\n" << uint.getValue() << "\n";
+        return os << "EBML Unsigned Int: " << uint.getValue() << "\n";
     }
 
-    class EbmlDouble : public EbmlValue {
+    class EbmlDouble : public EBMLElement {
         double n_;
     public:
         explicit EbmlDouble(long long start, long long contentSize, long long size, double n) :
-                EbmlValue{start, contentSize, size}, n_{n} {}
+                EBMLElement{start, contentSize, size}, n_{n} {}
 
         EbmlType getType() override {
             return EbmlType::kDouble;
@@ -107,11 +107,11 @@ namespace otchi_ebml {
         return os << "EBML Double: " << d.getValue() << "\n";
     }
 
-    class EbmlString : public EbmlValue {
+    class EbmlString : public EBMLElement {
         std::string s_;
     public:
         explicit EbmlString(long long start, long long contentSize, long long size, std::string s) :
-                EbmlValue{start, contentSize, size}, s_{std::move(s)} {}
+                EBMLElement{start, contentSize, size}, s_{std::move(s)} {}
 
         EbmlType getType() override {
             return EbmlType::kString;
@@ -126,11 +126,11 @@ namespace otchi_ebml {
         return os << "EBML String: " << s.getValue() << "\n";
     }
 
-    class EbmlUtf8 : public EbmlValue {
+    class EbmlUtf8 : public EBMLElement {
         std::string s_;
     public:
         explicit EbmlUtf8(long long start, long long contentSize, long long size, std::string s) :
-                EbmlValue{start, contentSize, size}, s_{std::move(s)} {}
+                EBMLElement{start, contentSize, size}, s_{std::move(s)} {}
 
         EbmlType getType() override {
             return EbmlType::kUTF8;
@@ -145,12 +145,12 @@ namespace otchi_ebml {
         return os << "EBML UTF8: " << s.getValue() << "\n";
     }
 
-    class EbmlDate : public EbmlValue {
+    class EbmlDate : public EBMLElement {
         std::chrono::system_clock::time_point date_;
     public:
         explicit EbmlDate(long long start, long long contentSize, long long size,
                           std::chrono::system_clock::time_point n) :
-                EbmlValue{start, contentSize, size}, date_{n} {}
+                EBMLElement{start, contentSize, size}, date_{n} {}
 
         EbmlType getType() override {
             return EbmlType::kDate;
@@ -166,11 +166,11 @@ namespace otchi_ebml {
         return os << "EBML Date: " << ctime(&time) << "\n";
     }
 
-    class EbmlBinary : public EbmlValue {
+    class EbmlBinary : public EBMLElement {
         std::vector<char> buffer_;
     public:
         explicit EbmlBinary(long long start, long long contentSize, long long size, std::vector<char> buffer) :
-                EbmlValue{start, contentSize, size}, buffer_{std::move(buffer)} {}
+                EBMLElement{start, contentSize, size}, buffer_{std::move(buffer)} {}
 
         EbmlType getType() override {
             return EbmlType::kBinary;
@@ -185,21 +185,21 @@ namespace otchi_ebml {
         return os << "EBML Binary\n";
     }
 
-    class EbmlMaster : public EbmlValue {
-        std::vector<EbmlValue *> children_;
+    class EbmlMaster : public EBMLElement {
+        std::vector<EBMLElement *> children_;
     public:
-        explicit EbmlMaster(long long start, long long contentSize, long long size, std::vector<EbmlValue *> children) :
-                EbmlValue{start, contentSize, size}, children_{std::move(children)} {}
+        explicit EbmlMaster(long long start, long long contentSize, long long size, std::vector<EBMLElement *> children) :
+                EBMLElement{start, contentSize, size}, children_{std::move(children)} {}
 
         EbmlType getType() override {
             return EbmlType::kMaster;
         }
 
-        void append(EbmlValue *child) {
+        void append(EBMLElement *child) {
             children_.push_back(child);
         }
 
-        [[nodiscard]] std::vector<EbmlValue *> getChildren() const {
+        [[nodiscard]] std::vector<EBMLElement *> getChildren() const {
             return children_;
         }
     };
@@ -234,7 +234,6 @@ namespace otchi_ebml {
                     os << dynamic_cast<EbmlInt &>(*child);
                     break;
             }
-            os << "\n";
         }
         return os;
     }
