@@ -9,17 +9,21 @@
 
 #include <string>
 #include <unordered_map>
+#include <optional>
+#include <utility>
 
 #include "ebml_type.h"
 #include "otchi_ebml/ebml_constants.h"
 #include "otchi_ebml/attributes/ebml_path.h"
+#include "ebml_scheme.h"
 
 namespace otchi_ebml {
 
     class EBMLBaseElement {
 
-        int idSize_;
-        int dataSize_;
+        EBMLIdSize idSize_;
+        EBMLDataSize dataSize_;
+        EBMLScheme scheme_;
 
     public:
 
@@ -36,8 +40,33 @@ namespace otchi_ebml {
 
         [[nodiscard]] virtual int getMinOccurs() const { return 0; }
 
-        [[nodiscard]] virtual int getMaxOccurs() const { return -1; }
-        
+        [[nodiscard]] virtual std::optional<int> getMaxOccurs() const { return std::nullopt; }
+
+        [[nodiscard]] virtual std::optional<std::tuple<EBMLDataSize, EBMLDataSize>>
+        getDataLengthRange() const { return std::nullopt; }
+
+        // ONLY MASTER
+        // TODO: Maybe move to master implementation
+        [[nodiscard]] virtual bool getUnknownSizeAllowed() const { return false; }
+
+        // ONLY MASTER
+        // TODO: Maybe move to master implementation
+        // TODO: Maybe don't make it virtual if it can be inferred
+        // TODO: Can be inferred from path see second paragraph:
+        // https://github.com/cellar-wg/ebml-specification/blob/master/specification.markdown#recursive
+        [[nodiscard]] virtual bool getRecursive() const { return false; }
+
+        [[nodiscard]] virtual bool getRecurring() const { return false; }
+
+        [[nodiscard]] virtual unsigned int getMinVer() const { return false; }
+
+        [[nodiscard]] virtual unsigned int getMaxVer() const { return scheme_.getVersion(); }
+
+        [[nodiscard]] virtual std::string getDescription() const { return ""; }
+
+
+        // TODO METHODS: RANGE, DEFAULT
+
     };
 
     template<const EBMLType type>
