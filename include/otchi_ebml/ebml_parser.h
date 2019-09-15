@@ -9,14 +9,18 @@
 #include <unordered_map>
 #include <filesystem>
 #include <utility>
+#include <otchi_ebml/tags/ebml_head.h>
 
 #include "otchi_ebml/elements/ebml_element_factory.h"
+#include "otchi_ebml/elements/ebml_document.h"
+#include "otchi_ebml/tags/ebml_tags.h"
 
 namespace otchi_ebml {
     class EBMLParser {
         // To validate the parsed document, make sure to add all possible tags that could appear.
         bool shouldValidate_ = false;
-        std::unordered_map<int, IEBMLElementFactory> tagsToParse;
+        std::unordered_map<EBMLId, IEBMLElementFactory*> bodyTags;
+        std::unordered_map<EBMLId, IEBMLElementFactory*> headTags = EBMLTags::getEbmlHeadTags();
         std::filesystem::path path_;
         std::ifstream fs_;
         std::streampos size_;
@@ -123,7 +127,19 @@ namespace otchi_ebml {
             return value;
         }
 
+        EBMLDocument parse(std::streamoff from = 0, std::streamoff to = -1) {
+            if (to < 0) {
+                to = size();
+            }
 
+            fs_.seekg(from, std::ios_base::beg);
+
+            EBMLDocument document{};
+        }
+
+        EBMLHead parseHead() {
+
+        }
     };
 }
 

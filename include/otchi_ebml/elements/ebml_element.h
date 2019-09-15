@@ -41,8 +41,6 @@ namespace otchi_ebml {
 
         // Virtual Methods
 
-        [[nodiscard]] virtual bool isMandatory() const { return false; }
-
         [[nodiscard]] virtual bool validateRange() const { return true; }
 
         [[nodiscard]] virtual int minOccurs() const { return 0; }
