@@ -12,6 +12,7 @@
 #include <optional>
 #include <utility>
 #include <fstream>
+#include <iostream>
 
 #include "ebml_type.h"
 #include "otchi_ebml/types/ebml_alias.h"
@@ -54,6 +55,10 @@ namespace otchi_ebml {
         [[nodiscard]] virtual std::optional<int> maxOccurs() const { return std::nullopt; }
 
         [[nodiscard]] virtual std::string getDescription() const { return ""; }
+
+        virtual void print() const {
+            std::cout << getName();
+        }
 
         // TODO ENCODE
 

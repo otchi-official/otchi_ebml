@@ -14,7 +14,7 @@ set(headers
         include/otchi_ebml/elements/ebml_element_factory.h
         include/otchi_ebml/tags/ebml_tags.h
         include/otchi_ebml/types/ebml_alias.h
-        include/otchi_ebml/elements/ebml_element_uint.h include/otchi_ebml/elements/ebml_element_string.h include/otchi_ebml/elements/ebml_element_utf8.h include/otchi_ebml/elements/ebml_element_binary.h include/otchi_ebml/elements/ebml_element_double.h include/otchi_ebml/elements/ebml_element_date.h include/otchi_ebml/ebml_parser.h include/otchi_ebml/elements/ebml_document.h include/otchi_ebml/tags/ebml_head.h)
+        include/otchi_ebml/elements/ebml_element_uint.h include/otchi_ebml/elements/ebml_element_string.h include/otchi_ebml/elements/ebml_element_utf8.h include/otchi_ebml/elements/ebml_element_binary.h include/otchi_ebml/elements/ebml_element_double.h include/otchi_ebml/elements/ebml_element_date.h include/otchi_ebml/ebml_parser.h include/otchi_ebml/elements/ebml_document.h include/otchi_ebml/tags/ebml_head.h include/otchi_ebml/tags/ebml_doc_type.h)
 set(src main.cpp include/otchi_ebml/elements/ebml_element_master.h src/tags/ebml_tags.cpp)
 
 
