@@ -21,14 +21,20 @@ namespace otchi_ebml {
 
     class EBMLBaseElement {
 
-        EBMLIdSize idSize_;
-        EBMLDataSize dataSize_;
-        EBMLContentSize contentSize_;
+        EBMLSize idSize_;
+        EBMLSize dataSize_;
+        EBMLSize contentSize_;
+        EBMLPosition position_;
 
     public:
 
-        EBMLBaseElement(EBMLIdSize idSize, EBMLDataSize dataSize, EBMLContentSize dataContentSize) :
-                idSize_{idSize}, dataSize_{dataSize}, contentSize_{dataContentSize} {}
+        EBMLBaseElement(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
+                        EBMLPosition position) :
+                idSize_{idSize}, dataSize_{dataSize}, contentSize_{dataContentSize}, position_{position} {}
+
+        [[nodiscard]] EBMLSize elementSize() const {
+            return idSize_ + dataSize_ + contentSize_;
+        }
 
         // Abstract methods
         [[nodiscard]] virtual EBMLType getType() = 0;
@@ -54,11 +60,13 @@ namespace otchi_ebml {
         virtual void decode(std::ifstream &ifstream) = 0;
 
         // getters
-        [[nodiscard]] EBMLIdSize getIdSize() const { return idSize_; }
+        [[nodiscard]] EBMLSize getIdSize() const { return idSize_; }
 
-        [[nodiscard]] EBMLDataSize getDataSize() const { return dataSize_; }
+        [[nodiscard]] EBMLSize getDataSize() const { return dataSize_; }
 
-        [[nodiscard]] EBMLContentSize getContentSize() const { return contentSize_; }
+        [[nodiscard]] EBMLSize getContentSize() const { return contentSize_; }
+
+        [[nodiscard]] EBMLPosition getPosition() const { return position_; }
 
     };
 

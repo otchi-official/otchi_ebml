@@ -23,11 +23,15 @@ namespace otchi_ebml {
             return EBMLType::kString;
         }
 
-        void decode(std::ifstream &ifstream) override {
-        }
+        void decode(std::ifstream &ifstream) override {}
+
 
         [[nodiscard]] std::vector<EBMLBaseElement*> getChildren() const {
             return children_;
+        }
+
+        void append(EBMLBaseElement* element) {
+            children_.push_back(element);
         }
     };
 

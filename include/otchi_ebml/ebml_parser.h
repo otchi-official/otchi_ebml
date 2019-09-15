@@ -10,6 +10,8 @@
 #include <filesystem>
 #include <utility>
 #include <otchi_ebml/tags/ebml_head.h>
+#include <cassert>
+#include <type_traits>
 
 #include "otchi_ebml/elements/ebml_element_factory.h"
 #include "otchi_ebml/elements/ebml_document.h"
@@ -54,7 +56,7 @@ namespace otchi_ebml {
             return fs_.tellg();
         }
 
-        int readId(int *s = nullptr) {
+        int readId(EBMLSize *s = nullptr) {
             unsigned char initialBit;
             fs_.read(reinterpret_cast<char *>(&initialBit), 1);
 
@@ -83,7 +85,7 @@ namespace otchi_ebml {
             return value;
         }
 
-        long long readSize(int *s = nullptr) {
+        long long readSize(EBMLSize *s = nullptr) {
             unsigned char initialBit;
             fs_.read(reinterpret_cast<char *>(&initialBit), 1);
 
@@ -127,28 +129,63 @@ namespace otchi_ebml {
             return value;
         }
 
-        EBMLDocument parse(std::streamoff from = 0, std::streamoff to = -1) {
+        std::vector<EBMLBaseElement *> parse(std::streamoff from = 0, std::streamoff to = -1) {
             if (to < 0) {
                 to = size();
             }
 
             fs_.seekg(from, std::ios_base::beg);
 
-            EBMLDocument document{};
+            std::vector<EBMLBaseElement *> masterNodes{};
+            std::stack<EBMLElement<EBMLType::kMaster> *> parentStack{};
 
+            while (fs_.tellg() < to) {
+                std::cout << "Current position: " << std::hex << fs_.tellg() << std::endl;
+                auto node = parseNode();
 
+                if (!node) {
+                    continue;
+                }
+
+                std::cout << "Found " << node->getName() << std::endl;
+
+                if (parentStack.empty()) {
+                    if (dynamic_cast<EBMLElement<EBMLType::kMaster>*>(node) == nullptr) {
+                        std::cerr << "Root nodes have to be a master tag" << std::endl;
+                    }
+                    masterNodes.push_back(node);
+                    parentStack.push(dynamic_cast<EBMLElement<EBMLType ::kMaster>*>(node));
+                    continue;
+                }
+
+                parentStack.top()->append(node);
+
+                if (!std::is_base_of<EBMLElement<EBMLType::kMaster>, decltype(node)>::value) {
+                    auto parentEnd = parentStack.top()->getPosition() + parentStack.top()->elementSize();
+                    auto nodeEnd = node->getPosition() + node->elementSize();
+                    if (parentEnd == nodeEnd) {
+                        std::cout << "Exact" << std::endl;
+                        parentStack.pop();
+                    } else if (parentEnd < nodeEnd) {
+                        std::cout << "Something went wrong" << std::endl;
+                    }
+                }
+
+            }
+
+            return masterNodes;
         }
 
         EBMLBaseElement *parseNode() {
-            long long start = fs_.tellg();
+            EBMLPosition position = this->position();
             EBMLId id;
-            EBMLIdSize idSize;
-            EBMLContentSize contentSize;
-            EBMLDataSize dataSize;
+            EBMLSize idSize;
+            EBMLSize contentSize;
+            EBMLSize dataSize;
 
             try {
                 id = readId(&idSize);
-            } catch(std::runtime_error &error) {
+            } catch (std::runtime_error &error) {
                 std::cerr << error.what() << std::endl;
                 return nullptr;
             }
@@ -164,8 +201,8 @@ namespace otchi_ebml {
                 return nullptr;
             }
 
-            IEBMLElementFactory* factory = tagsToParse[id];
-            EBMLBaseElement* element = factory->create(idSize, dataSize, contentSize);
+            IEBMLElementFactory *factory = tagsToParse[id];
+            EBMLBaseElement *element = factory->create(idSize, dataSize, contentSize, position);
             element->decode(fs_);
             return element;
         }

@@ -305,5 +305,6 @@ int main() {
     using namespace otchi_ebml;
     auto parser = EBMLParser("test1.mkv");
     auto element = dynamic_cast<EBMLHead*>(parser.parseNode());
+    parser.parse();
     return 0;
 }

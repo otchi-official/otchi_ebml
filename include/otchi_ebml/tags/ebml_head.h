@@ -40,10 +40,11 @@ namespace otchi_ebml {
         }
     };
 
-    class EBMLHeadFactory: public IEBMLElementFactory {
+    class EBMLHeadFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLIdSize idSize, EBMLDataSize dataSize, EBMLContentSize dataContentSize) override {
-            return new EBMLHead(idSize, dataSize, dataContentSize);
+        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
+                                EBMLPosition position) override {
+            return new EBMLHead(idSize, dataSize, dataContentSize, position);
         }
     };
 }

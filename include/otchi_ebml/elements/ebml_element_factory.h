@@ -12,7 +12,11 @@ namespace otchi_ebml {
 
     class IEBMLElementFactory {
     public:
-        virtual EBMLBaseElement *create(EBMLIdSize idSize, EBMLDataSize dataSize, EBMLContentSize dataContentSize) = 0;
+        virtual EBMLBaseElement *create(
+                EBMLSize idSize,
+                EBMLSize dataSize,
+                EBMLSize dataContentSize,
+                EBMLPosition position) = 0;
     };
 }
 
