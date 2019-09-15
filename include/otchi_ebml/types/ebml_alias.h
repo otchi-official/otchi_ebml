@@ -11,7 +11,7 @@ namespace otchi_ebml {
     typedef long long EBMLId;
     typedef int EBMLIdSize;
     typedef int EBMLDataSize;
-    typedef int EBMLContentSize;
+    typedef long long EBMLContentSize;
 }
 
 #endif //INCLUDE_OTCHI_EBML_EBML_ALIAS_H

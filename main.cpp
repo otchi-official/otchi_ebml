@@ -14,8 +14,10 @@
 #include "otchi_ebml/ebml_value.h"
 #include <otchi_ebml/types/ebml_clock.h>
 
+#include "otchi_ebml/ebml_parser.h"
 
-struct EbmlTag {
+
+/*struct EbmlTag {
     int id;
     std::string name;
     otchi_ebml::EbmlType type;
@@ -298,27 +300,10 @@ public:
     }
 
 };
-
+*/
 int main() {
-
-    //std::time_t t = system_clock::to_time_t(p);
-    //std::cout << std::ctime(&t) << std::endl;
-
-/*    std::filesystem::path path = "test1.mkv";
-    auto ebml = Ebml(path);
-    ebml.fs_.seekg(8);
-    std::cout << ebml.readUnicode(8) << std::endl;*/
-
-
-    /*std::filesystem::path path = "test1.mkv";
-    auto ebml = Ebml(path);
-    while (ebml.fs_.tellg() < ebml.size()) {
-        std::cout << ebml.readSize() << std::endl;
-    }*/
-
-    std::filesystem::path path = "test1.mkv";
-    auto ebml = Ebml(path);
-    auto elements = ebml.parse();
-    std::cout << *elements.front();
+    using namespace otchi_ebml;
+    auto parser = EBMLParser("test1.mkv");
+    auto element = dynamic_cast<EBMLHead*>(parser.parseNode());
     return 0;
 }

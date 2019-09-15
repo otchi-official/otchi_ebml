@@ -19,8 +19,8 @@ namespace otchi_ebml {
     class EBMLParser {
         // To validate the parsed document, make sure to add all possible tags that could appear.
         bool shouldValidate_ = false;
-        std::unordered_map<EBMLId, IEBMLElementFactory*> bodyTags;
-        std::unordered_map<EBMLId, IEBMLElementFactory*> headTags = EBMLTags::getEbmlHeadTags();
+        std::unordered_map<EBMLId, IEBMLElementFactory *> tagsToParse = EBMLTags::getEbmlHeadTags();
+        std::unordered_map<EBMLId, IEBMLElementFactory *> headTags = EBMLTags::getEbmlHeadTags();
         std::filesystem::path path_;
         std::ifstream fs_;
         std::streampos size_;
@@ -135,10 +135,39 @@ namespace otchi_ebml {
             fs_.seekg(from, std::ios_base::beg);
 
             EBMLDocument document{};
+
+
         }
 
-        EBMLHead parseHead() {
+        EBMLBaseElement *parseNode() {
+            long long start = fs_.tellg();
+            EBMLId id;
+            EBMLIdSize idSize;
+            EBMLContentSize contentSize;
+            EBMLDataSize dataSize;
 
+            try {
+                id = readId(&idSize);
+            } catch(std::runtime_error &error) {
+                std::cerr << error.what() << std::endl;
+                return nullptr;
+            }
+
+            contentSize = readSize(&dataSize);
+            if (contentSize == 0b011111111) {
+                std::cerr << "Don't know how to handle element with unknown contentSize: " << contentSize << std::endl;
+            }
+
+            if (tagsToParse.count(id) == 0) {
+                fs_.seekg(contentSize + fs_.tellg());
+                std::cout << "Skipping tag with id: " << std::hex << id << std::endl;
+                return nullptr;
+            }
+
+            IEBMLElementFactory* factory = tagsToParse[id];
+            EBMLBaseElement* element = factory->create(idSize, dataSize, contentSize);
+            element->decode(fs_);
+            return element;
         }
     };
 }

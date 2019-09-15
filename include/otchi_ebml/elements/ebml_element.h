@@ -51,7 +51,7 @@ namespace otchi_ebml {
 
         // TODO ENCODE
 
-        virtual void decode(std::ifstream ifstream) = 0;
+        virtual void decode(std::ifstream &ifstream) = 0;
 
         // getters
         [[nodiscard]] EBMLIdSize getIdSize() const { return idSize_; }

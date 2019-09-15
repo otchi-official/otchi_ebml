@@ -13,7 +13,8 @@
 
 namespace otchi_ebml {
 
-    enum class EbmlType {
+    /*
+     * enum class EbmlType {
         kSInt,
         kUInt,
         kDouble,
@@ -236,7 +237,7 @@ namespace otchi_ebml {
             }
         }
         return os;
-    }
+    }*/
 
 
 }

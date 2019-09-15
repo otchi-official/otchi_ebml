@@ -13,7 +13,7 @@ namespace otchi_ebml {
 
     template<>
     class EBMLElement<EBMLType::kMaster> : public EBMLBaseElement {
-        std::vector<EBMLElement> children_;
+        std::vector<EBMLBaseElement*> children_;
 
     public:
 
@@ -23,10 +23,10 @@ namespace otchi_ebml {
             return EBMLType::kString;
         }
 
-        void decode(std::ifstream ifstream) override {
+        void decode(std::ifstream &ifstream) override {
         }
 
-        [[nodiscard]] std::vector<EBMLElement> getChildren() const {
+        [[nodiscard]] std::vector<EBMLBaseElement*> getChildren() const {
             return children_;
         }
     };
