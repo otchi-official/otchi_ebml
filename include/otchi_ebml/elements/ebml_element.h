@@ -15,7 +15,7 @@
 
 #include "ebml_type.h"
 #include "otchi_ebml/types/ebml_alias.h"
-#include "otchi_ebml/attributes/ebml_path.h"
+#include "otchi_ebml/types/ebml_path.h"
 
 namespace otchi_ebml {
 
@@ -37,13 +37,17 @@ namespace otchi_ebml {
 
         [[nodiscard]] virtual EBMLId getId() const = 0;
 
+        [[nodiscard]] virtual EBMLPath getPath() const = 0;
+
         // Virtual Methods
 
         [[nodiscard]] virtual bool isMandatory() const { return false; }
 
         [[nodiscard]] virtual bool validateRange() const { return true; }
 
-        [[nodiscard]] virtual bool multipleAllowed() const { return false; }
+        [[nodiscard]] virtual int minOccurs() const { return 0; }
+
+        [[nodiscard]] virtual std::optional<int> maxOccurs() const { return std::nullopt; }
 
         [[nodiscard]] virtual std::string getDescription() const { return ""; }
 
