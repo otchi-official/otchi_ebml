@@ -11,11 +11,11 @@
 #include <unordered_map>
 #include <optional>
 #include <utility>
+#include <fstream>
 
 #include "ebml_type.h"
-#include "otchi_ebml/ebml_constants.h"
+#include "otchi_ebml/types/ebml_alias.h"
 #include "otchi_ebml/attributes/ebml_path.h"
-#include "ebml_scheme.h"
 
 namespace otchi_ebml {
 
@@ -23,9 +23,12 @@ namespace otchi_ebml {
 
         EBMLIdSize idSize_;
         EBMLDataSize dataSize_;
-        EBMLScheme scheme_;
+        EBMLContentSize contentSize_;
 
     public:
+
+        EBMLBaseElement(EBMLIdSize idSize, EBMLDataSize dataSize, EBMLContentSize dataContentSize) :
+                idSize_{idSize}, dataSize_{dataSize}, contentSize_{dataContentSize} {}
 
         // Abstract methods
         [[nodiscard]] virtual EBMLType getType() = 0;
@@ -34,53 +37,34 @@ namespace otchi_ebml {
 
         [[nodiscard]] virtual EBMLId getId() const = 0;
 
-        [[nodiscard]] virtual EBMLPath getPath() const = 0;
-
         // Virtual Methods
 
-        [[nodiscard]] virtual int getMinOccurs() const { return 0; }
+        [[nodiscard]] virtual bool isMandatory() const { return false; }
 
-        [[nodiscard]] virtual std::optional<int> getMaxOccurs() const { return std::nullopt; }
+        [[nodiscard]] virtual bool validateRange() const { return true; }
 
-        [[nodiscard]] virtual std::optional<std::tuple<EBMLDataSize, EBMLDataSize>>
-        getDataLengthRange() const { return std::nullopt; }
-
-        // ONLY MASTER
-        // TODO: Maybe move to master implementation
-        [[nodiscard]] virtual bool getUnknownSizeAllowed() const { return false; }
-
-        // ONLY MASTER
-        // TODO: Maybe move to master implementation
-        // TODO: Maybe don't make it virtual if it can be inferred
-        // TODO: Can be inferred from path see second paragraph:
-        // https://github.com/cellar-wg/ebml-specification/blob/master/specification.markdown#recursive
-        [[nodiscard]] virtual bool getRecursive() const { return false; }
-
-        [[nodiscard]] virtual bool getRecurring() const { return false; }
-
-        [[nodiscard]] virtual unsigned int getMinVer() const { return false; }
-
-        [[nodiscard]] virtual unsigned int getMaxVer() const { return scheme_.getVersion(); }
+        [[nodiscard]] virtual bool multipleAllowed() const { return false; }
 
         [[nodiscard]] virtual std::string getDescription() const { return ""; }
 
+        // TODO ENCODE
 
-        // TODO METHODS: RANGE, DEFAULT
+        virtual void decode(std::ifstream ifstream) = 0;
+
+        // getters
+        [[nodiscard]] EBMLIdSize getIdSize() const { return idSize_; }
+
+        [[nodiscard]] EBMLDataSize getDataSize() const { return dataSize_; }
+
+        [[nodiscard]] EBMLContentSize getContentSize() const { return contentSize_; }
 
     };
 
     template<const EBMLType type>
     class EBMLElement : EBMLBaseElement {
-
-        EBMLType getType() override {
-            return type;
-        }
+        using EBMLBaseElement::EBMLBaseElement;
     };
 
-    template<>
-    class EBMLElement<EBMLType::kUInt> : EBMLBaseElement {
-        unsigned int value;
-    };
 
 
     /*template < const EBMLType type >

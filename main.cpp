@@ -12,7 +12,7 @@
 #include <stack>
 
 #include "otchi_ebml/ebml_value.h"
-#include <otchi_ebml/ebml_clock.h>
+#include <otchi_ebml/types/ebml_clock.h>
 
 
 struct EbmlTag {
