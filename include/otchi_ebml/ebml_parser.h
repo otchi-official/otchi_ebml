@@ -13,6 +13,7 @@
 #include <cassert>
 #include <type_traits>
 #include <stack>
+#include <vector>
 
 #include "otchi_ebml/elements/ebml_element_factory.h"
 #include "otchi_ebml/elements/ebml_document.h"

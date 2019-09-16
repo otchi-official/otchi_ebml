@@ -1,0 +1,51 @@
+#!/bin/bash
+
+userName="Jorge Paravicini"
+orgName="Otchi Org"
+nameSpace="otchi_ebml"
+printf -v date '%(%d/%m/%Y)T\n' -1
+
+unset typeChar
+    while [[ ! ${typeChar} =~ ^['iuds8Dmb']+$ ]]; do
+        echo "Please enter in the typeChar:"
+        read -r typeChar
+    done
+echo This is a number :  "${typeChar}"
+
+case "${typeChar}" in
+  "i")
+    type="kSInt"
+    ;;
+  "u")
+    type="kUInt"
+    ;;
+  "d")
+    type="kDouble"
+    ;;
+  "s")
+    type="kString"
+    ;;
+  "8")
+    type="kUTF8"
+    ;;
+  "D")
+    type="kDate"
+    ;;
+  "m")
+    type="kMaster"
+    ;;
+  "b")
+    type="kBinary"
+    ;;
+esac
+
+echo ${type}
+
+
+read -r -p "Enter the file name: " fileName
+read -r -p "Enter the tag name: " tagName
+
+
+headerGuard="INCLUDE_OTCHI_EBML_${fileName^^}_H"
+echo $headerGuard
+

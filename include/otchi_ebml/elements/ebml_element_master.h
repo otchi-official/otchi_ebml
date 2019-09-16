@@ -6,6 +6,7 @@
 #define INCLUDE_OTCHI_EBML_EBML_ELEMENT_MASTER_H
 
 #include <iostream>
+#include <vector>
 
 #include "ebml_element.h"
 #include "ebml_element_factory.h"
