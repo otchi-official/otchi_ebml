@@ -32,7 +32,7 @@ namespace otchi_ebml {
         }
 
         [[nodiscard]] std::optional<int> maxOccurs() const override {
-            return 1;
+            return std::nullopt;
         }
 
         [[nodiscard]] std::string getDescription() const override {
