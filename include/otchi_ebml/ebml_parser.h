@@ -24,7 +24,6 @@ namespace otchi_ebml {
         // To validate the parsed document, make sure to add all possible tags that could appear.
         bool shouldValidate_ = false;
         std::unordered_map<EBMLId, IEBMLElementFactory *> tagsToParse = EBMLTags::getEbmlHeadTags();
-        std::unordered_map<EBMLId, IEBMLElementFactory *> headTags = EBMLTags::getEbmlHeadTags();
         std::filesystem::path path_;
         std::ifstream fs_;
         std::streampos size_;

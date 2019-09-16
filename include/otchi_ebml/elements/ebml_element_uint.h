@@ -23,15 +23,17 @@ namespace otchi_ebml {
             return EBMLType::kUInt;
         }
 
-        void decode(std::ifstream ifstream) override {
+        void decode(std::ifstream& ifstream) override {
             if (getContentSize() > 8 || getContentSize() < 1)
                 throw std::range_error("Length is out of range");
 
-            auto buffer = new unsigned char[getContentSize()];
-            ifstream.read(reinterpret_cast<char *>(buffer), getContentSize());
+            unsigned int length = getContentSize();
+
+            auto buffer = new unsigned char[length];
+            ifstream.read(reinterpret_cast<char *>(buffer), length);
             int value{0};
-            for (unsigned int i = 0; i < getContentSize(); i++) {
-                value += buffer[i] << 8u * (getContentSize() - i - 1);
+            for (unsigned int i = 0; i < length; i++) {
+                value += buffer[i] << 8u * (length - i - 1);
             }
             value_ = value;
         }
