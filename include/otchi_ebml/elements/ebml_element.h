@@ -50,7 +50,9 @@ namespace otchi_ebml {
 
         [[nodiscard]] virtual bool validateRange() const { return true; }
 
-        [[nodiscard]] virtual int minOccurs() const { return 0; }
+        [[nodiscard]] std::optional<int> minOccurs() const {
+            return ;
+        }
 
         [[nodiscard]] virtual std::optional<int> maxOccurs() const { return std::nullopt; }
 
