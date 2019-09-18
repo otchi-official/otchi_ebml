@@ -23,7 +23,7 @@ namespace otchi_ebml {
             return EBMLType::kSInt;
         }
 
-        void decode(std::ifstream ifstream) override {
+        void decode(std::ifstream &ifstream) override {
             if (getContentSize() > 8 || getContentSize() < 1)
                 throw std::range_error("Length is out of range");
 

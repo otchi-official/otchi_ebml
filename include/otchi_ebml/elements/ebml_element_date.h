@@ -27,7 +27,7 @@ namespace otchi_ebml {
             return EBMLType::kDate;
         }
 
-        void decode(std::ifstream ifstream) override {
+        void decode(std::ifstream &ifstream) override {
             using namespace std::chrono;
 
             auto buffer = new unsigned char[getContentSize()];
