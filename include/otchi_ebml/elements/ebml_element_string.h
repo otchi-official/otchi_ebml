@@ -23,7 +23,7 @@ namespace otchi_ebml {
             return EBMLType::kString;
         }
 
-        void decode(std::ifstream& ifstream) override {
+        void decode(std::ifstream &ifstream) override {
             auto buffer = new char[getContentSize()];
             ifstream.read(buffer, getContentSize());
             buffer[getContentSize()] = '\0';
@@ -38,7 +38,8 @@ namespace otchi_ebml {
         }
 
         void print() const override {
-            std::cout << getName() << ": " << getValue();
+            std::cout << getName() << std::dec << " [" << getPosition() << ", " << elementSize() << "]" << ": "
+                      << getValue();
         }
     };
 

@@ -13,7 +13,7 @@ using namespace otchi_ebml;
 std::unordered_map<EBMLId, IEBMLElementFactory *> EBMLTags::getEbmlHeadTags() {
     static std::unordered_map<EBMLId, IEBMLElementFactory *> tags{
             {EBMLHeadID, new EBMLHeadFactory()},
-            {EBMLDocTyeId, new EBMLDocTypeFactory()},
+            {EBMLDocTypeId, new EBMLDocTypeFactory()},
             {EBMLVersionId, new EBMLVersionFactory()}
     };
     return tags;

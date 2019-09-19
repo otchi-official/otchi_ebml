@@ -80,7 +80,7 @@ content = f"" \
           f"        }}\n" \
           f"\n" \
           f"        [[nodiscard]] EBMLPath getPath() const override {{\n" \
-          f"            return EBMLPath(\"{args.path}\";\n" \
+          f"            return \"{args.path}\";\n" \
           f"        }}\n" \
           f"\n" \
           f"        [[nodiscard]] std::string getDescription() const override {{\n" \

@@ -23,16 +23,8 @@ namespace otchi_ebml {
             return EBMLHeadID;
         }
 
-        [[nodiscard]] EBMLPath getPath() const override {
-            return EBMLPath("1*1(\\EBML)");
-        }
-
-        [[nodiscard]] int minOccurs() const override {
-            return 1;
-        }
-
-        [[nodiscard]] std::optional<int> maxOccurs() const override {
-            return std::nullopt;
+        [[nodiscard]] std::string getPath() const override {
+            return "1*1(\\EBML)";
         }
 
         [[nodiscard]] std::string getDescription() const override {

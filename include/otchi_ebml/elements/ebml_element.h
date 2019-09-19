@@ -13,6 +13,8 @@
 #include <utility>
 #include <fstream>
 #include <iostream>
+#include <cassert>
+#include <exception>
 
 #include "ebml_type.h"
 #include "otchi_ebml/types/ebml_alias.h"
@@ -26,12 +28,14 @@ namespace otchi_ebml {
         EBMLSize dataSize_;
         EBMLSize contentSize_;
         EBMLPosition position_;
+        EBMLBaseElement *parent_;
 
     public:
 
         EBMLBaseElement(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                        EBMLPosition position) :
-                idSize_{idSize}, dataSize_{dataSize}, contentSize_{dataContentSize}, position_{position} {}
+                        EBMLPosition position, EBMLBaseElement *parent = nullptr) :
+                idSize_{idSize}, dataSize_{dataSize}, contentSize_{dataContentSize}, position_{position},
+                parent_{parent} {}
 
         [[nodiscard]] EBMLSize elementSize() const {
             return idSize_ + dataSize_ + contentSize_;
@@ -44,17 +48,30 @@ namespace otchi_ebml {
 
         [[nodiscard]] virtual EBMLId getId() const = 0;
 
-        [[nodiscard]] virtual EBMLPath getPath() const = 0;
+        [[nodiscard]] virtual std::string getPath() const = 0;
 
         // Virtual Methods
 
-        [[nodiscard]] virtual bool validateRange() const { return true; }
+        [[nodiscard]] virtual bool validateValue() const { return true; }
 
         [[nodiscard]] std::optional<int> minOccurs() const {
-            return ;
+            if (getPath().at(0) == '*')
+                return std::nullopt;
+            int n = std::stoi(getPath().substr(0, 1));
+            return n;
         }
 
-        [[nodiscard]] virtual std::optional<int> maxOccurs() const { return std::nullopt; }
+        [[nodiscard]] virtual std::optional<int> maxOccurs() const {
+            int asteriskPos = getPath().at(0) == '*' ? 0 : 1;
+            assert(getPath().at(asteriskPos) == '*');
+
+            try {
+                int n = std::stoi(getPath().substr(asteriskPos + 1, asteriskPos + 1));
+                return n;
+            } catch (const std::exception &e) {
+                return std::nullopt;
+            }
+        }
 
         [[nodiscard]] virtual std::string getDescription() const { return ""; }
 

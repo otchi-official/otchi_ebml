@@ -9,7 +9,7 @@
 
 namespace otchi_ebml {
 
-    constexpr EBMLId EBMLDocTyeId = 0x4282;
+    constexpr EBMLId EBMLDocTypeId = 0x4282;
 
     class EBMLDocType : public EBMLElement<EBMLType::kString> {
     public:
@@ -20,19 +20,11 @@ namespace otchi_ebml {
         }
 
         [[nodiscard]] EBMLId getId() const override {
-            return EBMLDocTyeId;
+            return EBMLDocTypeId;
         }
 
-        [[nodiscard]] EBMLPath getPath() const override {
-            return EBMLPath("1*1(\\EBML\\DocType)");
-        }
-
-        [[nodiscard]] int minOccurs() const override {
-            return 1;
-        }
-
-        [[nodiscard]] std::optional<int> maxOccurs() const override {
-            return 1;
+        [[nodiscard]] std::string getPath() const override {
+            return "1*1(\\EBML\\DocType)";
         }
 
         [[nodiscard]] std::string getDescription() const override {
