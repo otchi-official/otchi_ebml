@@ -15,7 +15,7 @@ parser.add_argument("-t", "--type", choices=['i', 'u', 'd', 's', '8', 'D', 'm', 
 parser.add_argument("-u", "--username", default="Jorge Paravicini")
 parser.add_argument("-o", "--orgname", default="Otchi Org")
 parser.add_argument("-n", "--namespace", default="otchi_ebml")
-parser.add_argument("-p", "--file_path", default="include/otchi_ebml/tags/")
+parser.add_argument("-p", "--file_path", default="include/otchi_ebml/tags/matroska/")
 args = parser.parse_args(sys.argv[1:])
 
 type_map = {
@@ -109,7 +109,7 @@ if not os.path.isfile(file_path):
 
 file_path = file_path[8:]
 contents = ""
-with open("src/tags/ebml_tags.cpp", "r") as file:
+with open("src/tags/matroska/matroska_tags.cpp", "r") as file:
     started_import_checking = False
     done_import_checking = False
     started_map_checking = False
@@ -132,7 +132,7 @@ with open("src/tags/ebml_tags.cpp", "r") as file:
 
     contents = "".join(lines)
 
-with open("src/tags/ebml_tags.cpp", "w") as file:
+with open("src/tags/matroska/matroska_tags.cpp", "w") as file:
     pass
     file.write(contents)
     file.close()
