@@ -23,7 +23,7 @@ namespace otchi_ebml {
             return EBMLType::kUTF8;
         }
 
-        void decode(std::ifstream ifstream) override {
+        void decode(std::ifstream &ifstream) override {
             auto buffer = new char[getContentSize()];
             ifstream.read(buffer, getContentSize());
             buffer[getContentSize()] = '\0';
