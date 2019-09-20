@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <filesystem>
 #include <utility>
-#include <otchi_ebml/tags/ebml_head.h>
+#include <otchi_ebml/tags/ebml/ebml_head.h>
 #include <cassert>
 #include <type_traits>
 #include <stack>
@@ -17,7 +17,7 @@
 
 #include "otchi_ebml/elements/ebml_element_factory.h"
 #include "otchi_ebml/elements/ebml_document.h"
-#include "otchi_ebml/tags/ebml_tags.h"
+#include "otchi_ebml/tags/ebml/ebml_tags.h"
 
 namespace otchi_ebml {
     class EBMLParser {

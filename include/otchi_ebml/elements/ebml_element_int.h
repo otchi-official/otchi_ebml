@@ -48,6 +48,11 @@ namespace otchi_ebml {
                 throw NotInitialized("Trying to get value of object before it was decoded");
             return value_.value();
         }
+
+        void print() const override {
+            std::cout << getName() << std::dec << " [" << getPosition() << ", " << elementSize() << "]" << ": "
+                      << getValue();
+        }
     };
 
 }
