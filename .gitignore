@@ -38,3 +38,4 @@
 
 # Cmake files
 cmake-build-debug/*
+venv/*
