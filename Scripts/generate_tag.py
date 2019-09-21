@@ -15,7 +15,7 @@ parser.add_argument("-t", "--type", choices=['i', 'u', 'd', 's', '8', 'D', 'm', 
 parser.add_argument("-u", "--username", default="Jorge Paravicini")
 parser.add_argument("-o", "--orgname", default="Otchi Org")
 parser.add_argument("-n", "--namespace", default="otchi_ebml")
-parser.add_argument("-p", "--file_path", default="include/otchi_ebml/tags/")
+parser.add_argument("-p", "--file_path", default="include/otchi_ebml/tags/matroska/")
 args = parser.parse_args(sys.argv[1:])
 
 type_map = {
@@ -50,6 +50,8 @@ if not args.file_path.endswith("/"):
 
 file_path = f"{args.file_path}{args.file_name}"
 
+args.path = args.path.replace('\\', '\\\\')
+
 args.file_name = args.file_name[:-2]
 header_guard = f"INCLUDE_OTCHI_EBML_{args.file_name.upper()}_H"
 content = f"" \
@@ -65,21 +67,21 @@ content = f"" \
           f"\n" \
           f"namespace {args.namespace} {{\n" \
           f"\n"\
-          f"    constexpr EBMLId {args.tag_name} = {args.tag_id};\n" \
+          f"    constexpr EBMLId {args.tag_name}Id = {args.tag_id};\n" \
           f"\n" \
           f"    class {args.tag_name} : public EBMLElement<EBMLType::{type_map[args.type]}> {{\n" \
           f"    public:\n" \
           f"        using EBMLElement<EBMLType::{type_map[args.type]}>::EBMLElement;\n" \
           f"\n" \
           f"        [[nodiscard]] std::string getName() const override {{\n" \
-          f"            return {args.tag_name};\n" \
+          f"            return \"{args.tag_name}\";\n" \
           f"        }}\n" \
           f"\n" \
           f"        [[nodiscard]] EBMLId getId() const override {{\n" \
-          f"            return {args.tag_name};\n" \
+          f"            return {args.tag_name}Id;\n" \
           f"        }}\n" \
           f"\n" \
-          f"        [[nodiscard]] EBMLPath getPath() const override {{\n" \
+          f"        [[nodiscard]] std::string getPath() const override {{\n" \
           f"            return \"{args.path}\";\n" \
           f"        }}\n" \
           f"\n" \
@@ -99,8 +101,38 @@ content = f"" \
           f"\n" \
           f"#endif //{header_guard}\n"
 
-
 if not os.path.isfile(file_path):
     f = open(file_path, "x")
     f.write(content)
     f.close()
+    pass
+
+file_path = file_path[8:]
+contents = ""
+with open("src/tags/matroska/matroska_tags.cpp", "r") as file:
+    started_import_checking = False
+    done_import_checking = False
+    started_map_checking = False
+    done_map_checking = False
+    lines = file.readlines()
+    for i, line in enumerate(lines):
+        if not done_import_checking:
+            if line.startswith("#"):
+                started_import_checking = True
+            elif started_import_checking:
+                lines.insert(i, f"#include \"{file_path}\"\n")
+                done_import_checking = True
+
+        if not done_map_checking:
+            if line.lstrip().startswith("{"):
+                started_map_checking = True
+            elif started_map_checking:
+                lines.insert(i, f"\t\t\t{{{args.tag_name}Id, new {args.tag_name}Factory()}},\n")
+                done_map_checking = True
+
+    contents = "".join(lines)
+
+with open("src/tags/matroska/matroska_tags.cpp", "w") as file:
+    pass
+    file.write(contents)
+    file.close()

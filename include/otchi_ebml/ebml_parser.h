@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <filesystem>
 #include <utility>
-#include <otchi_ebml/tags/ebml_head.h>
+#include <otchi_ebml/tags/ebml/ebml_head.h>
 #include <cassert>
 #include <type_traits>
 #include <stack>
@@ -17,7 +17,8 @@
 
 #include "otchi_ebml/elements/ebml_element_factory.h"
 #include "otchi_ebml/elements/ebml_document.h"
-#include "otchi_ebml/tags/ebml_tags.h"
+#include "otchi_ebml/tags/ebml/ebml_tags.h"
+#include "otchi_ebml/tags/matroska/matroska_tags.h"
 
 namespace otchi_ebml {
     class EBMLParser {
@@ -31,6 +32,7 @@ namespace otchi_ebml {
     public:
 
         explicit EBMLParser(std::filesystem::path path) : path_{std::move(path)} {
+            tagsToParse.insert(MatroskaTags::getMatroskaTags().begin(), MatroskaTags::getMatroskaTags().end());
             openStream();
         }
 
@@ -141,17 +143,17 @@ namespace otchi_ebml {
             std::stack<EBMLElement<EBMLType::kMaster> *> parentStack{};
 
             while (fs_.tellg() < to) {
-                std::cout << "Current position: " << std::hex << fs_.tellg() << std::endl;
+                //std::cout << "Current position: " << std::dec << fs_.tellg() << std::endl;
                 auto node = parseNode();
 
                 if (!node) {
                     continue;
                 }
 
-                std::cout << "Found " << node->getName() << std::endl;
+                //std::cout << "Found " << node->getName() << std::endl;
 
                 if (parentStack.empty()) {
-                    if (dynamic_cast<EBMLElement<EBMLType::kMaster>*>(node) == nullptr) {
+                    if (node->getType() != EBMLType::kMaster) {
                         std::cerr << "Root nodes have to be a master tag" << std::endl;
                     }
                     masterNodes.push_back(node);
@@ -161,14 +163,14 @@ namespace otchi_ebml {
 
                 parentStack.top()->append(node);
 
-                if (!std::is_base_of<EBMLElement<EBMLType::kMaster>, decltype(node)>::value) {
+                if (node->getType() != EBMLType::kMaster) {
                     auto parentEnd = parentStack.top()->getPosition() + parentStack.top()->elementSize();
                     auto nodeEnd = node->getPosition() + node->elementSize();
                     if (parentEnd == nodeEnd) {
-                        std::cout << "Exact" << std::endl;
+                        //std::cout << "Exact" << std::endl;
                         parentStack.pop();
                     } else if (parentEnd < nodeEnd) {
-                        std::cout << "Something went wrong" << std::endl;
+                        std::cerr << "Something went wrong" << std::endl;
                     }
                 }
 

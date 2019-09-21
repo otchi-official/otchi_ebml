@@ -23,7 +23,7 @@ namespace otchi_ebml {
             return EBMLType::kDouble;
         }
 
-        void decode(std::ifstream ifstream) override {
+        void decode(std::ifstream &ifstream) override {
             double d;
             ifstream.read(reinterpret_cast<char *>(&d), getContentSize());
             value_ = d;
@@ -33,6 +33,11 @@ namespace otchi_ebml {
             if (value_ == std::nullopt)
                 throw NotInitialized("Trying to get value of object before it was decoded");
             return value_.value();
+        }
+
+        void print() const override {
+            std::cout << getName() << std::dec << " [" << getPosition() << ", " << elementSize() << "]" << ": "
+                      << getValue();
         }
     };
 

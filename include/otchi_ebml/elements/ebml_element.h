@@ -30,6 +30,8 @@ namespace otchi_ebml {
         EBMLPosition position_;
         EBMLBaseElement *parent_;
 
+        // TODO: Parse path
+
     public:
 
         EBMLBaseElement(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
@@ -80,6 +82,7 @@ namespace otchi_ebml {
         }
 
         // TODO ENCODE
+        // TODO: Validate
 
         virtual void decode(std::ifstream &ifstream) = 0;
 

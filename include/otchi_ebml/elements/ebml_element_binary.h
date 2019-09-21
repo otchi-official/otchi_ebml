@@ -6,6 +6,8 @@
 #define INCLUDE_OTCHI_EBML_EBML_ELEMENT_BINARY_H
 
 #include <vector>
+#include <algorithm>
+#include <iterator>
 
 #include "ebml_element.h"
 #include "ebml_element_factory.h"
@@ -26,8 +28,10 @@ namespace otchi_ebml {
         }
 
         void decode(std::ifstream &ifstream) override {
-            std::vector<char> vector;
-            ifstream.read(&vector[0], getContentSize());
+            char* buffer = new char[getContentSize()];
+            ifstream.read(buffer, getContentSize());
+            std::vector<char> vector{buffer, buffer+getContentSize()};
+
             value_ = vector;
         }
 

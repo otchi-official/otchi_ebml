@@ -10,6 +10,8 @@ int main() {
         std::cout << maxOccurs.value() << std::endl;
     }
 
-    elements[0]->print();
+    for (auto element : elements) {
+        element->print();
+    }
     return 0;
 }

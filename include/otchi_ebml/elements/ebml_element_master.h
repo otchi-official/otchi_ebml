@@ -23,7 +23,7 @@ namespace otchi_ebml {
         using EBMLBaseElement::EBMLBaseElement;
 
         EBMLType getType() override {
-            return EBMLType::kString;
+            return EBMLType::kMaster;
         }
 
         void decode(std::ifstream &ifstream) override {}
