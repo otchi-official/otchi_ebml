@@ -14,6 +14,7 @@
 #include <type_traits>
 #include <stack>
 #include <vector>
+#include <typeinfo>
 
 #include "otchi_ebml/elements/ebml_element_factory.h"
 #include "otchi_ebml/elements/ebml_document.h"
@@ -32,7 +33,8 @@ namespace otchi_ebml {
     public:
 
         explicit EBMLParser(std::filesystem::path path) : path_{std::move(path)} {
-            tagsToParse.insert(MatroskaTags::getMatroskaTags().begin(), MatroskaTags::getMatroskaTags().end());
+            auto tags = MatroskaTags::getMatroskaTags();
+            tagsToParse.insert(tags.begin(), tags.end());
             openStream();
         }
 
@@ -145,8 +147,46 @@ namespace otchi_ebml {
             while (fs_.tellg() < to) {
                 //std::cout << "Current position: " << std::dec << fs_.tellg() << std::endl;
                 auto node = parseNode();
+                // TODO: REMOVE PARENT NODES IF EMPTY NODES ARE RETURNED
 
-                if (!node) {
+                if (node && node->getType() == EBMLType::kMaster) {
+                    parentStack.push(dynamic_cast<EBMLElement<EBMLType::kMaster> *>(node));
+                    std::cout << "Pushed\n" << std::endl;
+                } else {
+                    while (!parentStack.empty()) {
+                        auto parentEnd = parentStack.top()->getPosition() + parentStack.top()->elementSize();
+                        std::cout << "Name: " << node->getName() << std::endl;
+                        std::cout << "Type: " << node->getType() << std::endl;
+                        std::cout << "Parent: " << parentStack.top()->getName() << std::endl;
+                        std::cout << "Parent end: " << parentEnd << std::endl;
+                        std::cout << "Current Position: " << fs_.tellg() << std::endl;
+                        std::cout << "------------------------" << std::endl;
+                        if (parentEnd == fs_.tellg()) {
+                            parentStack.pop();
+                            std::cout << "Popped\n" << std::endl;
+                        } else if (parentEnd < fs_.tellg()) {
+                            std::cout << "Type: " << node->getType() << std::endl;
+                            std::cout << "Size: " << parentStack.size() << std::endl;
+                            throw std::runtime_error("Invalid EBML Structure."
+                                                     " Content Size is longer than indicated.");
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
+                /*if (!node) {
+                    while (!parentStack.empty()) {
+                        auto parentEnd = parentStack.top()->getPosition() + parentStack.top()->elementSize();
+                        if (parentEnd == fs_.tellg()) {
+                            parentStack.pop();
+                        } else if (parentEnd < fs_.tellg()) {
+                            std::cerr << "Something went wrong" << std::endl;
+                            break;
+                        } else {
+                            break;
+                        }
+                    }
                     continue;
                 }
 
@@ -157,22 +197,30 @@ namespace otchi_ebml {
                         std::cerr << "Root nodes have to be a master tag" << std::endl;
                     }
                     masterNodes.push_back(node);
-                    parentStack.push(dynamic_cast<EBMLElement<EBMLType ::kMaster>*>(node));
+                    parentStack.push(dynamic_cast<EBMLElement<EBMLType::kMaster> *>(node));
                     continue;
                 }
 
                 parentStack.top()->append(node);
 
                 if (node->getType() != EBMLType::kMaster) {
-                    auto parentEnd = parentStack.top()->getPosition() + parentStack.top()->elementSize();
-                    auto nodeEnd = node->getPosition() + node->elementSize();
-                    if (parentEnd == nodeEnd) {
-                        //std::cout << "Exact" << std::endl;
-                        parentStack.pop();
-                    } else if (parentEnd < nodeEnd) {
-                        std::cerr << "Something went wrong" << std::endl;
+                    while (!parentStack.empty()) {
+                        auto parentEnd = parentStack.top()->getPosition() + parentStack.top()->elementSize();
+                        auto nodeEnd = node->getPosition() + node->elementSize();
+                        if (parentEnd == nodeEnd) {
+                            //std::cout << "Exact" << std::endl;
+                            parentStack.pop();
+                        } else if (parentEnd < nodeEnd) {
+                            std::cerr << "Something went wrong" << std::endl;
+                            break;
+                        } else {
+                            break;
+                        }
                     }
-                }
+
+                } else {
+                    parentStack.push(dynamic_cast<EBMLElement<EBMLType::kMaster> *>(node));
+                }*/
 
             }
 
@@ -189,18 +237,17 @@ namespace otchi_ebml {
             try {
                 id = readId(&idSize);
             } catch (std::runtime_error &error) {
-                std::cerr << error.what() << std::endl;
-                return nullptr;
+                throw std::runtime_error("Could not  read id, this is a fatal error.");
             }
 
             contentSize = readSize(&dataSize);
             if (contentSize == 0b011111111) {
-                std::cerr << "Don't know how to handle element with unknown contentSize: " << contentSize << std::endl;
+                throw std::runtime_error("There is no way to read an element with unknown content"
+                                         " size at the moment.");
             }
 
             if (tagsToParse.count(id) == 0) {
                 fs_.seekg(contentSize + fs_.tellg());
-                std::cout << "Skipping tag with id: " << std::hex << id << std::endl;
                 return nullptr;
             }
 

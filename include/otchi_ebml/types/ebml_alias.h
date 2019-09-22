@@ -9,7 +9,7 @@
 
 namespace otchi_ebml {
     typedef long long EBMLId;
-    typedef long long EBMLSize;
+    typedef unsigned long long EBMLSize;
     typedef long long EBMLPosition;
 }
 

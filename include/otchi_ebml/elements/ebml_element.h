@@ -70,7 +70,7 @@ namespace otchi_ebml {
             try {
                 int n = std::stoi(getPath().substr(asteriskPos + 1, asteriskPos + 1));
                 return n;
-            } catch (const std::exception &e) {
+            } catch (const std::exception &) {
                 return std::nullopt;
             }
         }

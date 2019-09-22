@@ -13,5 +13,8 @@ int main() {
     for (auto element : elements) {
         element->print();
     }
+
+
+    std::cout << dynamic_cast<EBMLElement<EBMLType::kMaster>*>(elements[1])->getChildren().size() << std::endl;
     return 0;
 }

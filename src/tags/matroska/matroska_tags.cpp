@@ -251,7 +251,7 @@
 
 using namespace otchi_ebml;
 
-std::unordered_map<EBMLId, IEBMLElementFactory *> otchi_ebml::MatroskaTags::getMatroskaTags() {
+std::unordered_map<EBMLId, IEBMLElementFactory *> MatroskaTags::getMatroskaTags() {
     static std::unordered_map<EBMLId, IEBMLElementFactory *> tags
     {
 			{EBMLMaxIDLengthId, new EBMLMaxIDLengthFactory()},
@@ -285,7 +285,7 @@ std::unordered_map<EBMLId, IEBMLElementFactory *> otchi_ebml::MatroskaTags::getM
 			{SilentTrackNumberId, new SilentTrackNumberFactory()},
 			{PositionId, new PositionFactory()},
 			{PrevSizeId, new PrevSizeFactory()},
-			{SimpleBlockId, new SimpleBlockFactory()},
+			//{SimpleBlockId, new SimpleBlockFactory()},
 			{BlockGroupId, new BlockGroupFactory()},
 			{BlockId, new BlockFactory()},
 			{BlockVirtualId, new BlockVirtualFactory()},

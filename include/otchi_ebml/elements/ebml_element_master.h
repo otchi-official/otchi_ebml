@@ -43,9 +43,7 @@ namespace otchi_ebml {
             }
             std::cout << std::dec << getName() << " [" << getPosition() << ", " << elementSize() << "]" << std::endl;
             for (EBMLBaseElement *child : children_) {
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCDFAInspection"
-                if (dynamic_cast<EBMLElement<EBMLType::kMaster> *>(child)) {
+                if (child->getType() == EBMLType::kMaster) {
                     dynamic_cast<EBMLElement<EBMLType::kMaster> *>(child)->print(index + 1);
                 } else {
                     for (int i = 0; i < index + 1; i++) {
@@ -54,7 +52,6 @@ namespace otchi_ebml {
                     child->print();
                     std::cout << std::endl;
                 }
-#pragma clang diagnostic pop
             }
         }
 

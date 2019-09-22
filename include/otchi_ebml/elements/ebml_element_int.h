@@ -35,8 +35,8 @@ namespace otchi_ebml {
             }
 
             // Make signed
-            unsigned int nbits = (8 - getContentSize()) + 8 * (getContentSize() - 1);
-            if (value >= (1u << (nbits - 1))) {
+            EBMLSize nbits = (8 - getContentSize()) + 8 * (getContentSize() - 1);
+            if ((unsigned int)value >= (1u << (nbits - 1))) {
                 value -= static_cast<int>(1u << nbits);
             }
 

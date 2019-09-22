@@ -27,7 +27,7 @@ namespace otchi_ebml {
             if (getContentSize() > 8 || getContentSize() < 1)
                 throw std::range_error("Length is out of range");
 
-            unsigned int length = getContentSize();
+            otchi_ebml::EBMLSize length = getContentSize();
 
             auto buffer = new unsigned char[length];
             ifstream.read(reinterpret_cast<char *>(buffer), length);
