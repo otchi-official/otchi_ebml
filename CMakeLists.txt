@@ -29,11 +29,13 @@ file(GLOB tags "include/otchi_ebml/tags/*.h")
 set(src main.cpp include/otchi_ebml/elements/ebml_element_master.h src/tags/ebml/ebml_tags.cpp src/tags/matroska/matroska_tags.cpp)
 
 
-add_executable(otchi_ebml ${headers} ${src} ${tags})
+add_library(otchi_ebml ${headers} ${src} ${tags})
 
 target_include_directories(otchi_ebml PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
+
+set_target_properties(otchi_ebml PROPERTIES PUBLIC_HEADER "${headers}")
 
 # Install
 
