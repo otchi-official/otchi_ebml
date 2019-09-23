@@ -145,35 +145,60 @@ namespace otchi_ebml {
             std::stack<EBMLElement<EBMLType::kMaster> *> parentStack{};
 
             while (fs_.tellg() < to) {
-                //std::cout << "Current position: " << std::dec << fs_.tellg() << std::endl;
                 auto node = parseNode();
+
+                if (node) {
+                    if (node->getType() == EBMLType::kMaster) {
+                        if (parentStack.empty()) {
+                            masterNodes.push_back(node);
+                            parentStack.push(dynamic_cast<EBMLElement<EBMLType::kMaster> *>(node));
+                        } else {
+                            parentStack.top()->append(node);
+                            parentStack.push(dynamic_cast<EBMLElement<EBMLType::kMaster> *>(node));
+                        }
+                    } else {
+                        if (parentStack.empty())
+                            masterNodes.push_back(node);
+                        else
+                            parentStack.top()->append(node);
+                    }
+                }
+
+                while (!parentStack.empty()) {
+                    auto parentEnd = parentStack.top()->getPosition() + parentStack.top()->elementSize();
+                    if (fs_.tellg() == parentEnd) {
+                        parentStack.pop();
+                    } else if (fs_.tellg() > parentEnd) {
+                        std::cerr << "Wrong EBML Layout" << std::endl;
+                    } else {
+                        break;
+                    }
+                }
+
+                /*if (node && !parentStack.empty()) {
+                    parentStack.top()->append(node);
+                } else if (node && parentStack.empty()) {
+                    masterNodes.push_back(node);
+                    parentStack.push(node);
+                }
                 // TODO: REMOVE PARENT NODES IF EMPTY NODES ARE RETURNED
 
-                if (node && node->getType() == EBMLType::kMaster) {
-                    parentStack.push(dynamic_cast<EBMLElement<EBMLType::kMaster> *>(node));
-                    std::cout << "Pushed\n" << std::endl;
+                if (node != nullptr && node->getType() == EBMLType::kMaster) {
+                    if (fs_.tellg() < (node->getPosition() + node->elementSize()))
+                        parentStack.top()->append(dynamic_cast<EBMLElement<EBMLType::kMaster> *>(node));
                 } else {
                     while (!parentStack.empty()) {
                         auto parentEnd = parentStack.top()->getPosition() + parentStack.top()->elementSize();
-                        std::cout << "Name: " << node->getName() << std::endl;
-                        std::cout << "Type: " << node->getType() << std::endl;
-                        std::cout << "Parent: " << parentStack.top()->getName() << std::endl;
-                        std::cout << "Parent end: " << parentEnd << std::endl;
-                        std::cout << "Current Position: " << fs_.tellg() << std::endl;
-                        std::cout << "------------------------" << std::endl;
                         if (parentEnd == fs_.tellg()) {
                             parentStack.pop();
                             std::cout << "Popped\n" << std::endl;
                         } else if (parentEnd < fs_.tellg()) {
-                            std::cout << "Type: " << node->getType() << std::endl;
-                            std::cout << "Size: " << parentStack.size() << std::endl;
-                            throw std::runtime_error("Invalid EBML Structure."
-                                                     " Content Size is longer than indicated.");
+                            parentStack.pop();
                         } else {
                             break;
                         }
                     }
-                }
+                }*/
 
                 /*if (!node) {
                     while (!parentStack.empty()) {

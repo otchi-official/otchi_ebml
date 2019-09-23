@@ -25,11 +25,15 @@ namespace otchi_ebml {
         }
 
         [[nodiscard]] std::string getPath() const override {
-            return "0*(\\Segment\\Cluster\\SimpleBlock)";
+            return R"(0*(\Segment\Cluster\SimpleBlock))";
         }
 
         [[nodiscard]] std::string getDescription() const override {
             return "";
+        }
+
+        void decode(std::ifstream &ifstream) override {
+            // TODO: Implement decoding for simple block
         }
     };
 
