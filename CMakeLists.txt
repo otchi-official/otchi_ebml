@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(include/otchi_ebml)
 
+include(GNUInstallDirs)
+
 set(CMAKE_CXX_STANDARD 17)
 
 set(headers
@@ -29,4 +31,27 @@ set(src main.cpp include/otchi_ebml/elements/ebml_element_master.h src/tags/ebml
 
 add_executable(otchi_ebml ${headers} ${src} ${tags})
 
-target_include_directories(otchi_ebml PUBLIC include)
+target_include_directories(otchi_ebml PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>)
+
+# Install
+
+install(TARGETS otchi_ebml
+        EXPORT otchi_ebml-targets
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/otchi_ebml
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
+
+install(EXPORT otchi_ebml-targets
+        NAMESPACE otchi::
+        FILE otchi_ebml-targets.cmake
+        DESTINATION lib/cmake/otchi_ebml
+        )
+
+export(EXPORT otchi_ebml-targets
+        NAMESPACE otchi::
+        FILE "${CMAKE_CURRENT_BINARY_DIR}/otchi_ebml-targets.cmake"
+        )
