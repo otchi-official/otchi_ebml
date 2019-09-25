@@ -120,6 +120,7 @@ namespace otchi_ebml {
             } else if (initialBit & 0b00000001u) {
                 size = 7;
             } else {
+                std::cout << fs_.tellg() << std::endl;
                 throw std::length_error("Undefined element size");
             }
 

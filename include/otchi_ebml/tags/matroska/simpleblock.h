@@ -33,7 +33,7 @@ namespace otchi_ebml {
         }
 
         void decode(std::ifstream &ifstream) override {
-            // TODO: Implement decoding for simple block
+
         }
     };
 

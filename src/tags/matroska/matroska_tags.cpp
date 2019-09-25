@@ -285,7 +285,7 @@ std::unordered_map<EBMLId, IEBMLElementFactory *> MatroskaTags::getMatroskaTags(
 			{SilentTrackNumberId, new SilentTrackNumberFactory()},
 			{PositionId, new PositionFactory()},
 			{PrevSizeId, new PrevSizeFactory()},
-			//{SimpleBlockId, new SimpleBlockFactory()},
+			{SimpleBlockId, new SimpleBlockFactory()},
 			{BlockGroupId, new BlockGroupFactory()},
 			{BlockId, new BlockFactory()},
 			{BlockVirtualId, new BlockVirtualFactory()},

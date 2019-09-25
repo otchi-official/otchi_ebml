@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(include/otchi_ebml)
+project(otchi_ebml)
 
 include(GNUInstallDirs)
 
