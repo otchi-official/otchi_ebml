@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId TrickMasterTrackUIDId = 0xC7;
+    constexpr ebml_id TrickMasterTrackUIDId = 0xC7;
 
     class TrickMasterTrackUID : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "TrickMasterTrackUID";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return TrickMasterTrackUIDId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class TrickMasterTrackUIDFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new TrickMasterTrackUID(idSize, dataSize, dataContentSize, position);
         }
     };

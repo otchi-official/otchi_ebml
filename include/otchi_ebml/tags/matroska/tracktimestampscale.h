@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_double.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId TrackTimestampScaleId = 0x23314F;
+    constexpr ebml_id TrackTimestampScaleId = 0x23314F;
 
     class TrackTimestampScale : public EBMLElement<EBMLType::kDouble> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "TrackTimestampScale";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return TrackTimestampScaleId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class TrackTimestampScaleFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new TrackTimestampScale(idSize, dataSize, dataContentSize, position);
         }
     };

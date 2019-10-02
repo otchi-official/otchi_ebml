@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_master.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId TagsId = 0x1254C367;
+    constexpr ebml_id TagsId = 0x1254C367;
 
     class Tags : public EBMLElement<EBMLType::kMaster> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "Tags";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return TagsId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class TagsFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new Tags(idSize, dataSize, dataContentSize, position);
         }
     };

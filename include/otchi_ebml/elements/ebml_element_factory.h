@@ -8,15 +8,25 @@
 #include "ebml_element.h"
 #include "otchi_ebml/types/ebml_alias.h"
 
-namespace otchi_ebml {
+namespace otchi::ebml {
 
-    class IEBMLElementFactory {
+    class IEbmlElementFactory {
     public:
-        virtual EBMLBaseElement *create(
-                EBMLSize idSize,
-                EBMLSize dataSize,
-                EBMLSize dataContentSize,
-                EBMLPosition position) = 0;
+
+		IEbmlElementFactory();
+
+		virtual ~IEbmlElementFactory() = default;
+		IEbmlElementFactory(const IEbmlElementFactory&) = delete;
+		IEbmlElementFactory& operator =(IEbmlElementFactory const&) = delete;
+		IEbmlElementFactory(IEbmlElementFactory&&) = delete;
+		IEbmlElementFactory& operator=(IEbmlElementFactory&&) = delete;
+    	
+	    virtual std::shared_ptr<AbstractEbmlElement> create(
+                ebml_size id_size,
+                ebml_size data_size,
+                ebml_size data_content_size,
+                ebml_position position,
+				std::weak_ptr<AbstractEbmlElement> parent = std::weak_ptr<AbstractEbmlElement>()) = 0;
     };
 }
 

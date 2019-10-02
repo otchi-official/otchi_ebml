@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ContentSigHashAlgoId = 0x47E6;
+    constexpr ebml_id ContentSigHashAlgoId = 0x47E6;
 
     class ContentSigHashAlgo : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ContentSigHashAlgo";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ContentSigHashAlgoId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ContentSigHashAlgoFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ContentSigHashAlgo(idSize, dataSize, dataContentSize, position);
         }
     };

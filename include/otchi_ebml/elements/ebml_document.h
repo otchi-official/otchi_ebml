@@ -6,11 +6,12 @@
 #define INCLUDE_OTCHI_EBML_EBML_DOCUMENT_H
 
 #include "ebml_element_master.h"
+#include "otchi_ebml/tags/ebml/ebml_head.h"
 
-namespace otchi_ebml {
-    struct EBMLDocument {
-        EBMLElement<EBMLType::kMaster>* head_;
-        EBMLElement<EBMLType::kMaster>* body;
+namespace otchi::ebml {
+    struct EbmlDocument {
+        std::unique_ptr<EBMLHead> head;
+        std::unique_ptr<EbmlElement<EbmlType::Master>> body;
     };
 }
 

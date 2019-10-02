@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_binary.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId PrevUIDId = 0x3CB923;
+    constexpr ebml_id PrevUIDId = 0x3CB923;
 
     class PrevUID : public EBMLElement<EBMLType::kBinary> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "PrevUID";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return PrevUIDId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class PrevUIDFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new PrevUID(idSize, dataSize, dataContentSize, position);
         }
     };

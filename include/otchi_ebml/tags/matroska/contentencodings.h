@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_master.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ContentEncodingsId = 0x6D80;
+    constexpr ebml_id ContentEncodingsId = 0x6D80;
 
     class ContentEncodings : public EBMLElement<EBMLType::kMaster> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ContentEncodings";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ContentEncodingsId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ContentEncodingsFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ContentEncodings(idSize, dataSize, dataContentSize, position);
         }
     };

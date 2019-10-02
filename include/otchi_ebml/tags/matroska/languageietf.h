@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_string.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId LanguageIETFId = 0x22B59D;
+    constexpr ebml_id LanguageIETFId = 0x22B59D;
 
     class LanguageIETF : public EBMLElement<EBMLType::kString> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "LanguageIETF";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return LanguageIETFId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class LanguageIETFFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new LanguageIETF(idSize, dataSize, dataContentSize, position);
         }
     };

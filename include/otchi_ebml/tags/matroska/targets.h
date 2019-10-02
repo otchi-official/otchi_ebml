@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_master.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId TargetsId = 0x63C0;
+    constexpr ebml_id TargetsId = 0x63C0;
 
     class Targets : public EBMLElement<EBMLType::kMaster> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "Targets";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return TargetsId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class TargetsFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new Targets(idSize, dataSize, dataContentSize, position);
         }
     };

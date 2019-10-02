@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId BlockAdditionIDId = 0xCB;
+    constexpr ebml_id BlockAdditionIDId = 0xCB;
 
     class BlockAdditionID : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "BlockAdditionID";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return BlockAdditionIDId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class BlockAdditionIDFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new BlockAdditionID(idSize, dataSize, dataContentSize, position);
         }
     };

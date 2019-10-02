@@ -1,45 +1,39 @@
-//
-// Created by Jorge Paravicini on 2019-09-19
-// Copyright (c) 2019 Otchi Org. All Rights reserved
-//
+///
+/// Created by Jorge Paravicini on 2019-09-19
+/// Copyright (c) 2019 Otchi Org. All Rights reserved
+///
 
 #ifndef INCLUDE_OTCHI_EBML_EBML_MAX_SIZE_LENGTH_H
 #define INCLUDE_OTCHI_EBML_EBML_MAX_SIZE_LENGTH_H
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
+#include "otchi_ebml/types/ebml_path.h"
+#include "otchi_ebml/elements/ebml_element_factory.h"
 
-namespace otchi_ebml {
+namespace otchi::ebml {
 
-    constexpr EBMLId EBMLMaxSizeLengthId = 0x42F3;
+	class EbmlMaxSizeLength final : public EbmlElement<EbmlType::UnsignedInteger> {
+	public:
+		using EbmlElement<EbmlType::UnsignedInteger>::EbmlElement;
 
-    class EBMLMaxSizeLength : public EBMLElement<EBMLType::kUInt> {
-    public:
-        using EBMLElement<EBMLType::kUInt>::EBMLElement;
+		static constexpr ebml_id ebml_max_size_length_id = 0x42F3;
 
-        [[nodiscard]] std::string getName() const override {
-            return "EBMLMaxSizeLength";
-        }
+		[[nodiscard]] std::string get_name() const override;
 
-        [[nodiscard]] EBMLId getId() const override {
-            return EBMLMaxSizeLengthId;
-        }
+		[[nodiscard]] ebml_id get_id() const override;
 
-        [[nodiscard]] std::string getPath() const override {
-            return "1*1(\\EBML\\EBMLMaxSizeLength)";
-        }
+		[[nodiscard]] EbmlPath get_path() const override;
 
-        [[nodiscard]] std::string getDescription() const override {
-            return "The EBMLMaxSizeLength Element stores the maximum permitted length in octets of the expressions of all Element Data Sizes to be found within the EBML Body. The EBMLMaxSizeLength Element documents an upper bound for the length of all Element Data Size expressions within the EBML Body and not an upper bound for the value of all Element Data Size expressions within the EBML Body. EBML Elements that have an Element Data Size expression which is larger in octets than what is expressed by EBMLMaxSizeLength Element are invalid.";
-        }
-    };
+		[[nodiscard]] std::string get_description() const override;
+	};
 
-    class EBMLMaxSizeLengthFactory : public IEBMLElementFactory {
-    public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
-            return new EBMLMaxSizeLength(idSize, dataSize, dataContentSize, position);
-        }
-    };
+	class EbmlMaxSizeLengthFactory final : public IEbmlElementFactory {
+	public:
+		std::shared_ptr<AbstractEbmlElement> create(
+			ebml_size id_size, ebml_size data_size,
+			ebml_size data_content_size, ebml_position position,
+			std::weak_ptr<AbstractEbmlElement> parent) override;
+	};
 }
 
 #endif //INCLUDE_OTCHI_EBML_EBML_MAX_SIZE_LENGTH_H

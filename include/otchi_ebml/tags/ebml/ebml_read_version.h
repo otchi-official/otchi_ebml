@@ -1,45 +1,39 @@
-//
-// Created by Jorge Paravicini on 2019-09-19
-// Copyright (c) 2019 Otchi Org. All Rights reserved
-//
+///
+/// Created by Jorge Paravicini on 2019-09-19
+/// Copyright (c) 2019 Otchi Org. All Rights reserved
+///
 
 #ifndef INCLUDE_OTCHI_EBML_EBML_READ_VERSION_H
 #define INCLUDE_OTCHI_EBML_EBML_READ_VERSION_H
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
+#include "otchi_ebml/types/ebml_path.h"
+#include "otchi_ebml/elements/ebml_element_factory.h"
 
-namespace otchi_ebml {
+namespace otchi::ebml {
 
-    constexpr EBMLId EBMLReadVersionId = 0x42F7;
+	class EbmlReadVersion final : public EbmlElement<EbmlType::UnsignedInteger> {
+	public:
+		using EbmlElement<EbmlType::UnsignedInteger>::EbmlElement;
 
-    class EBMLReadVersion : public EBMLElement<EBMLType::kUInt> {
-    public:
-        using EBMLElement<EBMLType::kUInt>::EBMLElement;
+		static constexpr ebml_id ebml_read_version_id = 0x42F7;
 
-        [[nodiscard]] std::string getName() const override {
-            return "EBMLReadVersion";
-        }
+		[[nodiscard]] std::string get_name() const override;
 
-        [[nodiscard]] EBMLId getId() const override {
-            return EBMLReadVersionId;
-        }
+		[[nodiscard]] ebml_id get_id() const override;
 
-        [[nodiscard]] std::string getPath() const override {
-            return "1*1(\\EBML\\EBMLReadVersion)";
-        }
+		[[nodiscard]] EbmlPath get_path() const override;
 
-        [[nodiscard]] std::string getDescription() const override {
-            return "The minimum EBML version an EBML Reader has to support to read this EBML Document. The EBMLReadVersion Element MUST be less than or equal to EBMLVersion.";
-        }
-    };
+		[[nodiscard]] std::string get_description() const override;
+	};
 
-    class EBMLReadVersionFactory : public IEBMLElementFactory {
-    public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
-            return new EBMLReadVersion(idSize, dataSize, dataContentSize, position);
-        }
-    };
+	class EbmlReadVersionFactory final : public IEbmlElementFactory {
+	public:
+		std::shared_ptr<AbstractEbmlElement> create(
+			ebml_size id_size, ebml_size data_size,
+			ebml_size data_content_size, ebml_position position,
+			std::weak_ptr<AbstractEbmlElement> parent) override;
+	};
 }
 
 #endif //INCLUDE_OTCHI_EBML_EBML_READ_VERSION_H

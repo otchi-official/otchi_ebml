@@ -9,10 +9,10 @@
 
 #include "otchi_ebml/elements/ebml_element_factory.h"
 
-namespace otchi_ebml {
+namespace otchi {
     class MatroskaTags {
     public:
-        static std::unordered_map<EBMLId, IEBMLElementFactory*> getMatroskaTags();
+        static std::unordered_map<ebml_id, IEBMLElementFactory*> getMatroskaTags();
     };
 }
 

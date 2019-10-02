@@ -7,10 +7,10 @@
 
 #include <tuple>
 
-namespace otchi_ebml {
-    typedef long long EBMLId;
-    typedef unsigned long long EBMLSize;
-    typedef long long EBMLPosition;
+namespace otchi::ebml {
+    typedef long long ebml_id;
+    typedef unsigned long long ebml_size;
+    typedef long long ebml_position;
 }
 
 #endif //INCLUDE_OTCHI_EBML_EBML_ALIAS_H

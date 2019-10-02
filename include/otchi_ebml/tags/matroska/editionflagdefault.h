@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId EditionFlagDefaultId = 0x45DB;
+    constexpr ebml_id EditionFlagDefaultId = 0x45DB;
 
     class EditionFlagDefault : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "EditionFlagDefault";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return EditionFlagDefaultId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class EditionFlagDefaultFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new EditionFlagDefault(idSize, dataSize, dataContentSize, position);
         }
     };

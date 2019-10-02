@@ -3,7 +3,7 @@
 
 int main() {
 
-    using namespace otchi_ebml;
+    using namespace otchi;
     auto parser = EBMLParser("test1.mkv");
     auto elements = parser.parse();
     parser.close();

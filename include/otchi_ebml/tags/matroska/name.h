@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_utf8.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId NameId = 0x536E;
+    constexpr ebml_id NameId = 0x536E;
 
     class Name : public EBMLElement<EBMLType::kUTF8> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "Name";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return NameId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class NameFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new Name(idSize, dataSize, dataContentSize, position);
         }
     };

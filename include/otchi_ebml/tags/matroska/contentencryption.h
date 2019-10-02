@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_master.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ContentEncryptionId = 0x5035;
+    constexpr ebml_id ContentEncryptionId = 0x5035;
 
     class ContentEncryption : public EBMLElement<EBMLType::kMaster> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ContentEncryption";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ContentEncryptionId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ContentEncryptionFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ContentEncryption(idSize, dataSize, dataContentSize, position);
         }
     };

@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_utf8.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId WritingAppId = 0x5741;
+    constexpr ebml_id WritingAppId = 0x5741;
 
     class WritingApp : public EBMLElement<EBMLType::kUTF8> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "WritingApp";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return WritingAppId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class WritingAppFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new WritingApp(idSize, dataSize, dataContentSize, position);
         }
     };

@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_utf8.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId SegmentFilenameId = 0x7384;
+    constexpr ebml_id SegmentFilenameId = 0x7384;
 
     class SegmentFilename : public EBMLElement<EBMLType::kUTF8> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "SegmentFilename";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return SegmentFilenameId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class SegmentFilenameFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new SegmentFilename(idSize, dataSize, dataContentSize, position);
         }
     };

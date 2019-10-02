@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_binary.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId SegmentUIDId = 0x73A4;
+    constexpr ebml_id SegmentUIDId = 0x73A4;
 
     class SegmentUID : public EBMLElement<EBMLType::kBinary> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "SegmentUID";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return SegmentUIDId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class SegmentUIDFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new SegmentUID(idSize, dataSize, dataContentSize, position);
         }
     };

@@ -21,20 +21,21 @@
 #include "otchi_ebml/tags/ebml/ebml_tags.h"
 #include "otchi_ebml/tags/matroska/matroska_tags.h"
 
-namespace otchi_ebml {
-    class EBMLParser {
+namespace otchi::ebml {
+	
+    class EbmlParser {
         // To validate the parsed document, make sure to add all possible tags that could appear.
-        bool shouldValidate_ = false;
-        std::unordered_map<EBMLId, IEBMLElementFactory *> tagsToParse = EBMLTags::getEbmlHeadTags();
+        std::unordered_map<ebml_id, std::unique_ptr<IEbmlElementFactory>> tags_to_parse_ = 
+			EbmlTags::get_ebml_head_tags();
         std::filesystem::path path_;
         std::ifstream fs_;
         std::streampos size_;
 
     public:
 
-        explicit EBMLParser(std::filesystem::path path) : path_{std::move(path)} {
+        explicit EbmlParser(std::filesystem::path path) : path_{std::move(path)} {
             auto tags = MatroskaTags::getMatroskaTags();
-            tagsToParse.insert(tags.begin(), tags.end());
+            tags_to_parse_.insert(tags.begin(), tags.end());
             openStream();
         }
 
@@ -61,7 +62,7 @@ namespace otchi_ebml {
             return fs_.tellg();
         }
 
-        int readId(EBMLSize *s = nullptr) {
+        int readId(ebml_size *s = nullptr) {
             unsigned char initialBit;
             fs_.read(reinterpret_cast<char *>(&initialBit), 1);
 
@@ -90,7 +91,7 @@ namespace otchi_ebml {
             return value;
         }
 
-        long long readSize(EBMLSize *s = nullptr) {
+        long long readSize(ebml_size *s = nullptr) {
             unsigned char initialBit;
             fs_.read(reinterpret_cast<char *>(&initialBit), 1);
 
@@ -169,7 +170,7 @@ namespace otchi_ebml {
                     auto parentEnd = parentStack.top()->getPosition() + parentStack.top()->elementSize();
                     if (fs_.tellg() == parentEnd) {
                         parentStack.pop();
-                    } else if (fs_.tellg() > parentEnd) {
+                    } else if ((unsigned int)fs_.tellg() > parentEnd) {
                         std::cerr << "Wrong EBML Layout" << std::endl;
                     } else {
                         break;
@@ -182,15 +183,15 @@ namespace otchi_ebml {
         }
 
         EBMLBaseElement *parseNode() {
-            EBMLPosition position = this->position();
-            EBMLId id;
-            EBMLSize idSize;
-            EBMLSize contentSize;
-            EBMLSize dataSize;
+            ebml_position position = this->position();
+            ebml_id id;
+            ebml_size idSize;
+            ebml_size contentSize;
+            ebml_size dataSize;
 
             try {
                 id = readId(&idSize);
-            } catch (std::runtime_error &error) {
+            } catch (std::runtime_error &) {
                 throw std::runtime_error("Could not  read id, this is a fatal error.");
             }
 
@@ -200,12 +201,12 @@ namespace otchi_ebml {
                                          " size at the moment.");
             }
 
-            if (tagsToParse.count(id) == 0) {
+            if (tags_to_parse_.count(id) == 0) {
                 fs_.seekg(contentSize + fs_.tellg());
                 return nullptr;
             }
 
-            IEBMLElementFactory *factory = tagsToParse[id];
+            IEBMLElementFactory *factory = tags_to_parse_[id];
             EBMLBaseElement *element = factory->create(idSize, dataSize, contentSize, position);
             element->decode(fs_);
             return element;

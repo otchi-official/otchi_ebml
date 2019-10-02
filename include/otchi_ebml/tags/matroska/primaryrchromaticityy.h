@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_double.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId PrimaryRChromaticityYId = 0x55D2;
+    constexpr ebml_id PrimaryRChromaticityYId = 0x55D2;
 
     class PrimaryRChromaticityY : public EBMLElement<EBMLType::kDouble> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "PrimaryRChromaticityY";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return PrimaryRChromaticityYId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class PrimaryRChromaticityYFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new PrimaryRChromaticityY(idSize, dataSize, dataContentSize, position);
         }
     };

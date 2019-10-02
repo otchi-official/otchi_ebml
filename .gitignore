@@ -39,3 +39,5 @@
 # Cmake files
 cmake-build-debug/*
 venv/*
+/.vs
+/out

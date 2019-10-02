@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ChapterSegmentEditionUIDId = 0x6EBC;
+    constexpr ebml_id ChapterSegmentEditionUIDId = 0x6EBC;
 
     class ChapterSegmentEditionUID : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ChapterSegmentEditionUID";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ChapterSegmentEditionUIDId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ChapterSegmentEditionUIDFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ChapterSegmentEditionUID(idSize, dataSize, dataContentSize, position);
         }
     };

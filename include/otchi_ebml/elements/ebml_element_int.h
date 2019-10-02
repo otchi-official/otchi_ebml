@@ -6,55 +6,26 @@
 #define INCLUDE_OTCHI_EBML_EBML_ELEMENT_INT_H
 
 #include "ebml_element.h"
-#include "ebml_element_factory.h"
-#include "otchi_ebml/exceptions/not_initialized.h"
 
-namespace otchi_ebml {
+namespace otchi::ebml
+{
+	template <>
+	class EbmlElement<EbmlType::SignedInteger> : public AbstractEbmlElement
+	{
+		std::unique_ptr<int> value_;
 
-    template<>
-    class EBMLElement<EBMLType::kSInt> : public EBMLBaseElement {
-        std::optional<int> value_;
+	public:
 
-    public:
+		using AbstractEbmlElement::AbstractEbmlElement;
 
-        using EBMLBaseElement::EBMLBaseElement;
+		[[nodiscard]] EbmlType get_type() const override final;
 
-        EBMLType getType() override {
-            return EBMLType::kSInt;
-        }
+		void decode(std::ifstream& ifstream) override;
 
-        void decode(std::ifstream &ifstream) override {
-            if (getContentSize() > 8 || getContentSize() < 1)
-                throw std::range_error("Length is out of range");
+		[[nodiscard]] int get_value() const;
 
-            auto buffer = new unsigned char[getContentSize()];
-            ifstream.read(reinterpret_cast<char *>(buffer), getContentSize());
-            int value{0};
-            for (unsigned int i = 0; i < getContentSize(); i++) {
-                value += buffer[i] << 8u * (getContentSize() - i - 1);
-            }
-
-            // Make signed
-            EBMLSize nbits = (8 - getContentSize()) + 8 * (getContentSize() - 1);
-            if ((unsigned int)value >= (1u << (nbits - 1))) {
-                value -= static_cast<int>(1u << nbits);
-            }
-
-            value_ = value;
-        }
-
-        [[nodiscard]] int getValue() const {
-            if (value_ == std::nullopt)
-                throw NotInitialized("Trying to get value of object before it was decoded");
-            return value_.value();
-        }
-
-        void print() const override {
-            std::cout << getName() << std::dec << " [" << getPosition() << ", " << elementSize() << "]" << ": "
-                      << getValue();
-        }
-    };
-
+		void print() const override;
+	};
 }
 
 #endif //INCLUDE_OTCHI_EBML_EBML_ELEMENT_INT_H

@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_double.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId LuminanceMinId = 0x55DA;
+    constexpr ebml_id LuminanceMinId = 0x55DA;
 
     class LuminanceMin : public EBMLElement<EBMLType::kDouble> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "LuminanceMin";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return LuminanceMinId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class LuminanceMinFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new LuminanceMin(idSize, dataSize, dataContentSize, position);
         }
     };

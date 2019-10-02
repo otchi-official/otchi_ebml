@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId TransferCharacteristicsId = 0x55BA;
+    constexpr ebml_id TransferCharacteristicsId = 0x55BA;
 
     class TransferCharacteristics : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "TransferCharacteristics";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return TransferCharacteristicsId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class TransferCharacteristicsFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new TransferCharacteristics(idSize, dataSize, dataContentSize, position);
         }
     };

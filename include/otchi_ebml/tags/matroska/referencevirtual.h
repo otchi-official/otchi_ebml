@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_int.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ReferenceVirtualId = 0xFD;
+    constexpr ebml_id ReferenceVirtualId = 0xFD;
 
     class ReferenceVirtual : public EBMLElement<EBMLType::kSInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ReferenceVirtual";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ReferenceVirtualId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ReferenceVirtualFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ReferenceVirtual(idSize, dataSize, dataContentSize, position);
         }
     };

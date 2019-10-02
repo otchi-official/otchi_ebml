@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_utf8.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId FileDescriptionId = 0x467E;
+    constexpr ebml_id FileDescriptionId = 0x467E;
 
     class FileDescription : public EBMLElement<EBMLType::kUTF8> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "FileDescription";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return FileDescriptionId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class FileDescriptionFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new FileDescription(idSize, dataSize, dataContentSize, position);
         }
     };

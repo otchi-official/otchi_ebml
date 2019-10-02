@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_master.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ReferenceFrameId = 0xC8;
+    constexpr ebml_id ReferenceFrameId = 0xC8;
 
     class ReferenceFrame : public EBMLElement<EBMLType::kMaster> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ReferenceFrame";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ReferenceFrameId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ReferenceFrameFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ReferenceFrame(idSize, dataSize, dataContentSize, position);
         }
     };

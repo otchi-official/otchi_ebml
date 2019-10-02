@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ContentEncodingTypeId = 0x5033;
+    constexpr ebml_id ContentEncodingTypeId = 0x5033;
 
     class ContentEncodingType : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ContentEncodingType";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ContentEncodingTypeId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ContentEncodingTypeFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ContentEncodingType(idSize, dataSize, dataContentSize, position);
         }
     };

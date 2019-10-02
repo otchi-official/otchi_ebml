@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId CbSubsamplingHorzId = 0x55B5;
+    constexpr ebml_id CbSubsamplingHorzId = 0x55B5;
 
     class CbSubsamplingHorz : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "CbSubsamplingHorz";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return CbSubsamplingHorzId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class CbSubsamplingHorzFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new CbSubsamplingHorz(idSize, dataSize, dataContentSize, position);
         }
     };

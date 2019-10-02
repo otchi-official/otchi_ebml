@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId AESSettingsCipherModeId = 0x47E8;
+    constexpr ebml_id AESSettingsCipherModeId = 0x47E8;
 
     class AESSettingsCipherMode : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "AESSettingsCipherMode";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return AESSettingsCipherModeId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class AESSettingsCipherModeFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new AESSettingsCipherMode(idSize, dataSize, dataContentSize, position);
         }
     };

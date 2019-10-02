@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_binary.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ContentSigKeyIDId = 0x47E4;
+    constexpr ebml_id ContentSigKeyIDId = 0x47E4;
 
     class ContentSigKeyID : public EBMLElement<EBMLType::kBinary> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ContentSigKeyID";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ContentSigKeyIDId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ContentSigKeyIDFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ContentSigKeyID(idSize, dataSize, dataContentSize, position);
         }
     };

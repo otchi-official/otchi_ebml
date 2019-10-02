@@ -6,39 +6,24 @@
 #define INCLUDE_OTCHI_EBML_EBML_ELEMENT_DOUBLE_H
 
 #include "ebml_element.h"
-#include "ebml_element_factory.h"
-#include "otchi_ebml/exceptions/not_initialized.h"
 
-namespace otchi_ebml {
+namespace otchi::ebml {
 
     template<>
-    class EBMLElement<EBMLType::kDouble> : public EBMLBaseElement {
-        std::optional<double> value_;
+    class EbmlElement<EbmlType::Double> : public AbstractEbmlElement {
+        std::unique_ptr<double> value_;
 
     public:
 
-        using EBMLBaseElement::EBMLBaseElement;
+        using AbstractEbmlElement::AbstractEbmlElement;
 
-        EBMLType getType() override {
-            return EBMLType::kDouble;
-        }
+        [[nodiscard]] EbmlType get_type() const override final;
 
-        void decode(std::ifstream &ifstream) override {
-            double d;
-            ifstream.read(reinterpret_cast<char *>(&d), getContentSize());
-            value_ = d;
-        }
+        void decode(std::ifstream& ifstream) override;
 
-        [[nodiscard]] double getValue() const {
-            if (value_ == std::nullopt)
-                throw NotInitialized("Trying to get value of object before it was decoded");
-            return value_.value();
-        }
+        [[nodiscard]] double get_value() const;
 
-        void print() const override {
-            std::cout << getName() << std::dec << " [" << getPosition() << ", " << elementSize() << "]" << ": "
-                      << getValue();
-        }
+        void print() const override;
     };
 
 }

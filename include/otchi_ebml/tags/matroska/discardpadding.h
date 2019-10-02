@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_int.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId DiscardPaddingId = 0x75A2;
+    constexpr ebml_id DiscardPaddingId = 0x75A2;
 
     class DiscardPadding : public EBMLElement<EBMLType::kSInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "DiscardPadding";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return DiscardPaddingId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class DiscardPaddingFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new DiscardPadding(idSize, dataSize, dataContentSize, position);
         }
     };

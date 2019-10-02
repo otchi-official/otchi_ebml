@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_date.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId DateUTCId = 0x4461;
+    constexpr ebml_id DateUTCId = 0x4461;
 
     class DateUTC : public EBMLElement<EBMLType::kDate> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "DateUTC";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return DateUTCId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class DateUTCFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new DateUTC(idSize, dataSize, dataContentSize, position);
         }
     };

@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_binary.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId BlockVirtualId = 0xA2;
+    constexpr ebml_id BlockVirtualId = 0xA2;
 
     class BlockVirtual : public EBMLElement<EBMLType::kBinary> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "BlockVirtual";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return BlockVirtualId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class BlockVirtualFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new BlockVirtual(idSize, dataSize, dataContentSize, position);
         }
     };

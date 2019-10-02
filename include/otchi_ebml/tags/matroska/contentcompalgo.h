@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ContentCompAlgoId = 0x4254;
+    constexpr ebml_id ContentCompAlgoId = 0x4254;
 
     class ContentCompAlgo : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ContentCompAlgo";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ContentCompAlgoId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ContentCompAlgoFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ContentCompAlgo(idSize, dataSize, dataContentSize, position);
         }
     };

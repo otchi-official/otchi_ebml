@@ -5,61 +5,33 @@
 #ifndef INCLUDE_OTCHI_EBML_EBML_ELEMENT_MASTER_H
 #define INCLUDE_OTCHI_EBML_EBML_ELEMENT_MASTER_H
 
-#include <iostream>
 #include <vector>
+#include <memory>
 
 #include "ebml_element.h"
-#include "ebml_element_factory.h"
-#include "otchi_ebml/exceptions/not_initialized.h"
 
-namespace otchi_ebml {
+namespace otchi::ebml {
 
     template<>
-    class EBMLElement<EBMLType::kMaster> : public EBMLBaseElement {
-        std::vector<EBMLBaseElement *> children_;
+    class EbmlElement<EbmlType::Master> : public AbstractEbmlElement {
+        std::vector<std::shared_ptr<AbstractEbmlElement>> children_;
 
     public:
 
-        using EBMLBaseElement::EBMLBaseElement;
+        using AbstractEbmlElement::AbstractEbmlElement;
 
-        EBMLType getType() override {
-            return EBMLType::kMaster;
-        }
+        [[nodiscard]] EbmlType get_type() const override final;
 
         void decode(std::ifstream &ifstream) override {}
 
 
-        [[nodiscard]] std::vector<EBMLBaseElement *> getChildren() const {
-            return children_;
-        }
+        [[nodiscard]] std::vector<std::shared_ptr<AbstractEbmlElement>> get_children() const;
 
-        void append(EBMLBaseElement *element) {
-            children_.push_back(element);
-        }
+        void append(const std::shared_ptr<AbstractEbmlElement>& element);
 
-        void print(int index) const {
-            for (int i = 0; i < index; i++) {
-                std::cout << "\t";
-            }
-            std::cout << std::dec << getName() << " [" << getPosition() << ", " << elementSize() << "]" << std::endl;
-            for (EBMLBaseElement *child : children_) {
-                if (child->getType() == EBMLType::kMaster) {
-                    dynamic_cast<EBMLElement<EBMLType::kMaster> *>(child)->print(index + 1);
-                } else {
-                    for (int i = 0; i < index + 1; i++) {
-                        std::cout << "\t";
-                    }
-                    child->print();
-                    std::cout << std::endl;
-                }
-            }
-        }
+        void print(int index) const;
 
-        void print() const override {
-            print(0);
-        }
-
-
+        void print() const override;
     };
 
 }

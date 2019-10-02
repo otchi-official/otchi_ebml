@@ -6,41 +6,24 @@
 #define INCLUDE_OTCHI_EBML_EBML_ELEMENT_STRING_H
 
 #include "ebml_element.h"
-#include "ebml_element_factory.h"
-#include "otchi_ebml/exceptions/not_initialized.h"
 
-namespace otchi_ebml {
+namespace otchi::ebml {
 
     template<>
-    class EBMLElement<EBMLType::kString> : public EBMLBaseElement {
-        std::optional<std::string> value_;
+    class EbmlElement<EbmlType::String> : public AbstractEbmlElement {
+        std::unique_ptr<std::string> value_;
 
     public:
 
-        using EBMLBaseElement::EBMLBaseElement;
+        using AbstractEbmlElement::AbstractEbmlElement;
 
-        EBMLType getType() override {
-            return EBMLType::kString;
-        }
+        [[nodiscard]] EbmlType get_type() const override final;
 
-        void decode(std::ifstream &ifstream) override {
-            auto buffer = new char[getContentSize()];
-            ifstream.read(buffer, getContentSize());
-            buffer[getContentSize()] = '\0';
-            std::string s{buffer};
-            value_ = s;
-        }
+        void decode(std::ifstream& ifstream) override;
 
-        [[nodiscard]] std::string getValue() const {
-            if (value_ == std::nullopt)
-                throw NotInitialized("Trying to get value of object before it was decoded");
-            return value_.value();
-        }
+        [[nodiscard]] std::string get_value() const;
 
-        void print() const override {
-            std::cout << getName() << std::dec << " [" << getPosition() << ", " << elementSize() << "]" << ": "
-                      << getValue();
-        }
+        void print() const override;
     };
 
 }

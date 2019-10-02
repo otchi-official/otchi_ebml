@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_utf8.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId TitleId = 0x7BA9;
+    constexpr ebml_id TitleId = 0x7BA9;
 
     class Title : public EBMLElement<EBMLType::kUTF8> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "Title";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return TitleId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class TitleFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new Title(idSize, dataSize, dataContentSize, position);
         }
     };

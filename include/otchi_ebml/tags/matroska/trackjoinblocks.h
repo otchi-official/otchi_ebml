@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_master.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId TrackJoinBlocksId = 0xE9;
+    constexpr ebml_id TrackJoinBlocksId = 0xE9;
 
     class TrackJoinBlocks : public EBMLElement<EBMLType::kMaster> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "TrackJoinBlocks";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return TrackJoinBlocksId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class TrackJoinBlocksFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new TrackJoinBlocks(idSize, dataSize, dataContentSize, position);
         }
     };

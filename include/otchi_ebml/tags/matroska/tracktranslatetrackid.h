@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_binary.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId TrackTranslateTrackIDId = 0x66A5;
+    constexpr ebml_id TrackTranslateTrackIDId = 0x66A5;
 
     class TrackTranslateTrackID : public EBMLElement<EBMLType::kBinary> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "TrackTranslateTrackID";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return TrackTranslateTrackIDId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class TrackTranslateTrackIDFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new TrackTranslateTrackID(idSize, dataSize, dataContentSize, position);
         }
     };

@@ -249,10 +249,10 @@
 #include "otchi_ebml/tags/matroska/tagstring.h"
 #include "otchi_ebml/tags/matroska/tagbinary.h"
 
-using namespace otchi_ebml;
+using namespace otchi;
 
-std::unordered_map<EBMLId, IEBMLElementFactory *> MatroskaTags::getMatroskaTags() {
-    static std::unordered_map<EBMLId, IEBMLElementFactory *> tags
+std::unordered_map<ebml_id, IEBMLElementFactory *> MatroskaTags::getMatroskaTags() {
+    static std::unordered_map<ebml_id, IEBMLElementFactory *> tags
     {
 			{EBMLMaxIDLengthId, new EBMLMaxIDLengthFactory()},
 			{EBMLMaxSizeLengthId, new EBMLMaxSizeLengthFactory()},

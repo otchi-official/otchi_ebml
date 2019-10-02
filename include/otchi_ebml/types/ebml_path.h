@@ -8,13 +8,13 @@
 #include <string>
 #include <utility>
 
-namespace otchi_ebml {
-    class EBMLPath {
+namespace otchi::ebml {
+    class EbmlPath {
         std::string path_;
 
     public:
 
-        explicit EBMLPath(std::string path) : path_{std::move(path)} {}
+        explicit EbmlPath(std::string path) : path_{std::move(path)} {}
     };
 }
 

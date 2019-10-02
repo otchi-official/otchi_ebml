@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ReferenceTimestampId = 0xCA;
+    constexpr ebml_id ReferenceTimestampId = 0xCA;
 
     class ReferenceTimestamp : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ReferenceTimestamp";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ReferenceTimestampId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ReferenceTimestampFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ReferenceTimestamp(idSize, dataSize, dataContentSize, position);
         }
     };

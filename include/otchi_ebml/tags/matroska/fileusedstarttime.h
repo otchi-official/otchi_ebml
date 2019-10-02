@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId FileUsedStartTimeId = 0x4661;
+    constexpr ebml_id FileUsedStartTimeId = 0x4661;
 
     class FileUsedStartTime : public EBMLElement<EBMLType::kUInt> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "FileUsedStartTime";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return FileUsedStartTimeId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class FileUsedStartTimeFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new FileUsedStartTime(idSize, dataSize, dataContentSize, position);
         }
     };

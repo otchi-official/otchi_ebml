@@ -10,13 +10,18 @@
 #include "otchi_ebml/elements/ebml_element_factory.h"
 
 
-namespace otchi_ebml {
+namespace otchi::ebml
+{
+	class EbmlTags
+	{
+	public:
+		static std::unordered_map<ebml_id, std::shared_ptr<IEbmlElementFactory>> get_ebml_head_tags();
+		static std::unordered_map<ebml_id, std::shared_ptr<IEbmlElementFactory>> get_global_tags();
+	};
 
-    class EBMLTags {
-    public:
-        static std::unordered_map<EBMLId, IEBMLElementFactory*> getEbmlHeadTags();
-    };
-
+	std::unordered_map<ebml_id, std::shared_ptr<IEbmlElementFactory>> operator+(
+		std::unordered_map<ebml_id, std::shared_ptr<IEbmlElementFactory>>& t1,
+		std::unordered_map<ebml_id, std::shared_ptr<IEbmlElementFactory>>& t2);
 }
 
 #endif //INCLUDE_OTCHI_EBML_EBML_TAGS_H

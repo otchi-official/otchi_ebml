@@ -1,45 +1,39 @@
-//
-// Created by Jorge Paravicini on 2019-09-19
-// Copyright (c) 2019 Otchi Org. All Rights reserved
-//
+///
+/// Created by Jorge Paravicini on 2019-09-19
+/// Copyright (c) 2019 Otchi Org. All Rights reserved
+///
 
 #ifndef INCLUDE_OTCHI_EBML_DOC_TYPE_EXTENSION_H
 #define INCLUDE_OTCHI_EBML_DOC_TYPE_EXTENSION_H
 
 #include "otchi_ebml/elements/ebml_element_master.h"
+#include "otchi_ebml/types/ebml_path.h"
+#include "otchi_ebml/elements/ebml_element_factory.h"
 
-namespace otchi_ebml {
+namespace otchi::ebml {
 
-    constexpr EBMLId DocTypeExtensionId = 0x4281;
+	class DocTypeExtension final : public EbmlElement<EbmlType::Master> {
+	public:
+		using EbmlElement<EbmlType::Master>::EbmlElement;
 
-    class DocTypeExtension : public EBMLElement<EBMLType::kMaster> {
-    public:
-        using EBMLElement<EBMLType::kMaster>::EBMLElement;
+		static constexpr ebml_id doc_type_extension_id = 0x4281;
 
-        [[nodiscard]] std::string getName() const override {
-            return "DocTypeExtension";
-        }
+		[[nodiscard]] std::string get_name() const override;
 
-        [[nodiscard]] EBMLId getId() const override {
-            return DocTypeExtensionId;
-        }
+		[[nodiscard]] ebml_id get_id() const override;
 
-        [[nodiscard]] std::string getPath() const override {
-            return "0*(\\EBML\\DocTypeExtension)";
-        }
+		[[nodiscard]] EbmlPath get_path() const override;
 
-        [[nodiscard]] std::string getDescription() const override {
-            return "A DocTypeExtension adds extra Elements to the main DocType+DocTypeVersion tuple it's attached to. An EBML Reader MAY know these extra Elements and how to use them. A DocTypeExtension MAY be used to iterate between experimental Elements before they are integrated in a regular DocTypeVersion. Reading one DocTypeExtension version of a DocType+DocTypeVersion tuple doesn't imply one should be able to read upper versions of this DocTypeExtension.";
-        }
-    };
+		[[nodiscard]] std::string get_description() const override;
+	};
 
-    class DocTypeExtensionFactory : public IEBMLElementFactory {
-    public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
-            return new DocTypeExtension(idSize, dataSize, dataContentSize, position);
-        }
-    };
+	class DocTypeExtensionFactory final : public IEbmlElementFactory {
+	public:
+		std::shared_ptr<AbstractEbmlElement> create(
+			ebml_size id_size, ebml_size data_size,
+			ebml_size data_content_size, ebml_position position,
+			std::weak_ptr<AbstractEbmlElement> parent) override;
+	};
 }
 
 #endif //INCLUDE_OTCHI_EBML_DOC_TYPE_EXTENSION_H

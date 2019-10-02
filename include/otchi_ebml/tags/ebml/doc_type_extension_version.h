@@ -1,45 +1,39 @@
-//
-// Created by Jorge Paravicini on 2019-09-19
-// Copyright (c) 2019 Otchi Org. All Rights reserved
-//
+///
+/// Created by Jorge Paravicini on 2019-09-19
+/// Copyright (c) 2019 Otchi Org. All Rights reserved
+///
 
 #ifndef INCLUDE_OTCHI_EBML_DOC_TYPE_EXTENSION_VERSION_H
 #define INCLUDE_OTCHI_EBML_DOC_TYPE_EXTENSION_VERSION_H
 
 #include "otchi_ebml/elements/ebml_element_uint.h"
+#include "otchi_ebml/types/ebml_path.h"
+#include "otchi_ebml/elements/ebml_element_factory.h"
 
-namespace otchi_ebml {
+namespace otchi::ebml {
 
-    constexpr EBMLId DocTypeExtensionVersionId = 0x4284;
+	class DocTypeExtensionVersion final : public EbmlElement<EbmlType::UnsignedInteger> {
+	public:
+		using EbmlElement<EbmlType::UnsignedInteger>::EbmlElement;
 
-    class DocTypeExtensionVersion : public EBMLElement<EBMLType::kUInt> {
-    public:
-        using EBMLElement<EBMLType::kUInt>::EBMLElement;
+		static constexpr ebml_id doc_type_extension_version_id = 0x4284;
 
-        [[nodiscard]] std::string getName() const override {
-            return "DocTypeExtensionVersion";
-        }
+		[[nodiscard]] std::string get_name() const override;
 
-        [[nodiscard]] EBMLId getId() const override {
-            return DocTypeExtensionVersionId;
-        }
+		[[nodiscard]] ebml_id get_id() const override;
 
-        [[nodiscard]] std::string getPath() const override {
-            return "1*1(\\EBML\\DocTypeExtension\\Version)";
-        }
+		[[nodiscard]] EbmlPath get_path() const override;
 
-        [[nodiscard]] std::string getDescription() const override {
-            return " ";
-        }
-    };
+		[[nodiscard]] std::string get_description() const override;
+	};
 
-    class DocTypeExtensionVersionFactory : public IEBMLElementFactory {
-    public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
-            return new DocTypeExtensionVersion(idSize, dataSize, dataContentSize, position);
-        }
-    };
+	class DocTypeExtensionVersionFactory final : public IEbmlElementFactory {
+	public:
+		std::shared_ptr<AbstractEbmlElement> create(
+			ebml_size id_size, ebml_size data_size,
+			ebml_size data_content_size, ebml_position position,
+			std::weak_ptr<AbstractEbmlElement> parent) override;
+	};
 }
 
 #endif //INCLUDE_OTCHI_EBML_DOC_TYPE_EXTENSION_VERSION_H

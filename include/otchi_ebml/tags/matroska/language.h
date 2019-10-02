@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_string.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId LanguageId = 0x22B59C;
+    constexpr ebml_id LanguageId = 0x22B59C;
 
     class Language : public EBMLElement<EBMLType::kString> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "Language";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return LanguageId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class LanguageFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new Language(idSize, dataSize, dataContentSize, position);
         }
     };

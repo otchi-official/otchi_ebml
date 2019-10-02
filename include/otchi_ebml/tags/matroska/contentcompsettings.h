@@ -8,9 +8,9 @@
 
 #include "otchi_ebml/elements/ebml_element_binary.h"
 
-namespace otchi_ebml {
+namespace otchi {
 
-    constexpr EBMLId ContentCompSettingsId = 0x4255;
+    constexpr ebml_id ContentCompSettingsId = 0x4255;
 
     class ContentCompSettings : public EBMLElement<EBMLType::kBinary> {
     public:
@@ -20,7 +20,7 @@ namespace otchi_ebml {
             return "ContentCompSettings";
         }
 
-        [[nodiscard]] EBMLId getId() const override {
+        [[nodiscard]] ebml_id getId() const override {
             return ContentCompSettingsId;
         }
 
@@ -35,8 +35,8 @@ namespace otchi_ebml {
 
     class ContentCompSettingsFactory : public IEBMLElementFactory {
     public:
-        EBMLBaseElement *create(EBMLSize idSize, EBMLSize dataSize, EBMLSize dataContentSize,
-                                EBMLPosition position) override {
+        EBMLBaseElement *create(ebml_size idSize, ebml_size dataSize, ebml_size dataContentSize,
+                                ebml_position position) override {
             return new ContentCompSettings(idSize, dataSize, dataContentSize, position);
         }
     };
